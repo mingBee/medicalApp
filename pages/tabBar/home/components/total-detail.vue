@@ -27,7 +27,7 @@
 				
 			</div>
 			
-			<div class="detail-btn" v-if="sign ==='department'">查看明细</div>
+			<div class="detail-btn" v-if="sign ==='department'" @click="goToDetail">查看明细</div>
 
 			
 		</div>
@@ -45,6 +45,11 @@
 		methods:{
 			choiceType(sign){
 				this.sign = sign;
+			},
+			goToDetail(){
+				uni.navigateTo({
+					url: '/pages/home/depart-detail'
+				});
 			}
 		}
 	}

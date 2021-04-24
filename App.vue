@@ -15,4 +15,5 @@
 <style>
 	/*每个页面公共css */
 	@import './common/css/flex.css';
+	@import './common/css/font/iconfont.css';
 </style>

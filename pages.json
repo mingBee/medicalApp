@@ -3,25 +3,70 @@
 		{
 			"path": "pages/tabBar/home/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "首页"
 			}
 		},
 		{
 			"path": "pages/tabBar/appeal/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "申诉"
 			}
 		},
 		{
-			"path": "pages/tabBar/news/index",
+			"path": "pages/tabBar/policy/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "政策",
+				"navigationBarBackgroundColor": "#23A8F2",
+				"navigationBarTextStyle": "#ffffff",
+				"app-plus": {  
+					"titleNView": false //禁用原生导航栏  
+				} 
 			}
 		},
 		{
 			"path": "pages/tabBar/me/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "我"
+			}
+		},
+		
+		{
+			"path": "pages/home/depart-detail",
+			"style": {
+				"navigationBarTitleText": "科室累计情况详情"
+			}
+		},
+		{
+			"path": "pages/appeal/form/index",
+			"style": {
+				"navigationBarTitleText": "申诉"
+			}
+		},
+		{
+			"path": "pages/policy/search",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"app-plus": {  
+				    "titleNView": {
+							"backgroundColor":"#23A8F2",
+							"backButton":{
+								"color":"#ffffff"
+							},
+							"searchInput":{
+								"autoFocus":true,
+								"align":"left",
+								"backgroundColor":"#ffffff",
+								"borderRadius":"5px",
+								"placeholder":"搜索"
+							}
+						}
+				  }
+			}
+		},
+		{
+			"path": "pages/policy/detail",
+			"style": {
+				"navigationBarTitleText": "政策详情"
 			}
 		}
 	],
@@ -48,7 +93,7 @@
 				"selectedIconPath": "static/apiHL.png",
 				"text": "申诉"
 			}, {
-				"pagePath": "pages/tabBar/news/index",
+				"pagePath": "pages/tabBar/policy/index",
 				"iconPath": "static/extui.png",
 				"selectedIconPath": "static/extuiHL.png",
 				"text": "政策"

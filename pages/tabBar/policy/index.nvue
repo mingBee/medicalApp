@@ -1,0 +1,131 @@
+<template>
+	<view>
+		
+		<view class="status-bar" :style="{ height: iStatusBarHeight + 'px'}"></view>
+		
+		<list class="list">
+			<header>
+				<view class="search-part" @click="goToSearch">
+					<view class="content">
+						<icon type="search" size="12" color="#fff" class="cum-search-icon"/>
+						<text class="txt">搜索文章</text>
+					</view>
+				</view>
+			</header>
+			<!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
+			<cell v-for="(item, index) in dataList" :key="item.id" @click="goToDetail(item.id)">
+				<view class="item">
+					<view class="img-area">
+						<image class="main-img" :src="image"></image>
+						<text class="title">{{item.title}}</text>
+					</view>
+					<view class="bottom-area">
+						<text class="txt">{{item.subTitle}}</text>
+						<image class="sub-img" :src="subImage"></image>
+					</view>
+				</view>
+			</cell>
+		</list>
+	</view>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {
+				iStatusBarHeight:0,
+        dataList: [
+					{id: "1", title: '山西将统一城乡居民医保门诊慢性病病种',subTitle:'4月1日起执行 优化规范为45个病种',}, 
+					{id: "2", title: '山西将统一城乡居民医保门诊慢性病病种',subTitle:'4月1日起执行 优化规范为45个病种' }, 
+					{id: "3", title: '山西将统一城乡居民医保门诊慢性病病种',subTitle:'4月1日起执行 优化规范为45个病种'},
+					]
+      }
+    },
+		onLoad() {
+			this.iStatusBarHeight = uni.getSystemInfoSync().statusBarHeight
+		},
+		methods:{
+			goToSearch(){
+				uni.navigateTo({
+					url: '/pages/policy/search'
+				});
+			},
+			goToDetail(){
+				uni.navigateTo({
+					url: '/pages/policy/detail'
+				});
+			}
+		}
+  }
+</script>
+
+<style>
+	.status-bar {
+		background-color: #23A8F2;
+	}
+	.search-part {
+		background-color: #23A8F2;
+		padding:20rpx 20rpx;
+	}
+	.search-part .content {
+		background-color: #5CC0F2;
+		flex-direction: row;
+		align-items: center;
+		height:36rpx;
+		border-radius: 13rpx;
+		padding:26rpx 20rpx;
+	}
+	
+	.search-part .content .cum-search-icon{
+		position: relative;
+		top:2rpx;
+	}
+	
+	.search-part .content .txt {
+		font-size: 26rpx;
+		color:#fff;
+		margin-left:10rpx;
+	}
+	
+	.list {
+	}
+	.list .item {
+		align-items: stretch;
+		margin:0 20rpx;
+		margin-top:30rpx;
+		width:710rpx;
+		border-radius: 10rpx;
+		border:1px solid #ccc;
+	}
+	.list .item .img-area{
+		position: relative;
+	}
+	.list .item .img-area .title {
+		position:absolute;
+		bottom: 10rpx;
+		left:10rpx;
+		color: red;
+		font-size: 34rpx;
+		z-index:1;
+	}
+	.list .item .img-area .main-img {
+		width:710rpx;
+		height:300rpx;
+		border:1px solid #ccc;
+	}
+	
+	.list .item .bottom-area {
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
+		padding:25rpx 0;
+	}
+	.list .item .bottom-area .txt{
+		font-size: 28rpx;
+	}
+	.list .item .bottom-area .sub-img{
+		width:160rpx;
+		height:90rpx;
+		border:1px solid #ccc;
+	}
+</style>

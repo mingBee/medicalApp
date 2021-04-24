@@ -1,0 +1,60 @@
+<template>
+  <list>
+		<refresh>加载中</refresh>
+    <!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
+    <cell v-for="(item, index) in dataList" :key="item.id" class="item" :loadmoreoffset="20">
+			
+			<view class="area">
+				<text class="title">医生:</text>
+				<text class="value">{{item.name}}</text>
+			</view>
+			
+			<view class="area">
+				<text class="title">拟扣款:</text>
+				<text class="value">{{item.deduction}}元</text>
+			</view>
+			
+			<view class="area">
+				<text class="title">违规记录:</text>
+				<text class="value">{{item.violation}}条</text>
+			</view>
+      
+    </cell>
+		
+		<loading>加载更多</loading>
+  </list>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {
+        dataList: [
+					{id: "1", name: '张**',deduction:'3000',violation:40}, 
+					{id: "2", name: '王**',deduction:'300',violation:3},
+					{id: "3", name: '李**',deduction:'5000',violation:50}]
+      }
+    }
+  }
+</script>
+
+<style >
+	.item {
+		flex-direction: row;
+		justify-content: space-between;
+		padding:15rpx 30rpx;
+	}
+	.area {
+		flex-direction: row;
+		font-size: 25rpx;
+	}
+		
+	.area .title {
+		font-size: 30rpx;
+	}
+	
+	.area .value {
+		font-weight: 600;
+		font-size: 30rpx;
+	}
+</style>

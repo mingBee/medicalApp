@@ -1,0 +1,158 @@
+<template>
+	<view class="flex flex-dir-column container">
+		
+		<view class="flex tab-part">
+			<view class="flex-1 item" @click="choiceType('1')" :class="{active:sign ==='1'}">未申诉</view>
+			<view class="flex-1 item" @click="choiceType('2')"  :class="{active:sign ==='2'}">已申诉</view>
+		</view>
+		
+		<view class="notify-part">
+			<p class="item">2021年4月批次申诉中，截止日期：2021年4月30日</p>
+		</view>
+		
+		<scroll-view scroll-y="true" class="list" 
+		@scrolltoupper="refresh" @scrolltolower="loadmore">
+				<view class="item" v-for="(item,index) in appealList" :key="item.id">
+					
+					<view class="flex flex-dir-row reason-area">
+						<view class="sign"></view>
+						<view class="title">拒付理由：</view>
+						<view class="value">禁忌症：半乳糖血症，肠梗阻，急腹痛。</view>
+					</view>
+					
+					<view class="detail-area">
+						<view class="detail-cell">
+							<view class="title">参保人：</view>
+							<view class="value">{{item.name}}</view>
+						</view>
+						<view class="detail-cell">
+							<view class="title">住院号：</view>
+							<view class="value">{{item.number}}</view>
+						</view>
+						<view class="detail-cell">
+							<view class="title">出院诊断：</view>
+							<view class="value">{{item.result}}</view>
+						</view>
+						<view class="detail-cell">
+							<view class="title">三目名称：</view>
+							<view class="value">{{item.three}}</view>
+						</view>
+						<view class="detail-cell">
+							<view class="title">扣款金额：</view>
+							<view class="value">{{item.amount}}元</view>
+						</view>
+						
+						<view class="detail-cell btn-cell">
+							<view class="btn" @click="goToAppealForm">申诉</view>
+							</view>
+					</view>
+					
+				</view>
+		</scroll-view>
+		
+	</view>
+</template>
+
+<script>
+	export default {
+		data(){
+			return{
+				sign:'1',
+				appealList:[
+					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
+					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
+					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
+					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
+					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30}
+				]
+			}
+		},
+		methods:{
+			choiceType(sign){
+				this.sign = sign;
+			},
+			goToAppealForm(){
+				uni.navigateTo({
+					url: '/pages/appeal/form/index'
+				});
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.container {
+		height:calc( 100vh - 100px);
+		align-items: stretch;
+	}
+	.tab-part {
+		background-color: #5677FC;
+		box-shadow: 0 2px 5px rgba(0,0,0,.5);
+		.item {
+			box-sizing: border-box;
+			padding:20rpx 0;
+			text-align: center;
+			color:rgba(255,255,255,0.7);
+			border-bottom: 2px solid #5677FC;
+			&.active {
+				border-color: #fff;
+				color: #fff;
+			}
+		}
+	}
+	
+	.notify-part {
+		margin:15rpx 0;
+		.item {
+			padding:10rpx 15px;
+			background-color: #FEFBE8;
+			color:#E5A046;
+			font-size: 25rpx;
+		}
+	}
+	
+	.list {
+		flex:1 1 auto;
+		height:1px; //添加一个默认高度flex才能生效
+		
+		.item {
+			padding:15rpx 15rpx;
+			.reason-area {
+				position: relative;
+				border:1px solid #ccc;
+				padding:15rpx 15rpx;
+				.sign {
+					position: absolute;
+					top:-8rpx;
+					left:-8rpx;
+					width:16rpx;
+					height:16rpx;
+					border-radius: 50%;
+					background-color: #DD5044;
+				}
+			}
+			.detail-area {
+				border:1px solid #ccc;
+				padding:15rpx 15rpx;
+				.detail-cell {
+					display: flex;
+					flex-direction: row;
+					padding:10rpx 0;
+				}
+				.btn-cell {
+					justify-content: flex-end;
+					padding-right:50rpx;
+					.btn {
+						background-color: #007AFF;
+						color:#fff;
+						border-radius: 15rpx;
+						padding:6rpx 30rpx;
+						font-size: 24rpx;
+					}
+				}
+				
+			}
+		}
+	}
+	
+</style>

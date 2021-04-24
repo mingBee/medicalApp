@@ -1,0 +1,82 @@
+<template>
+  <list class="list">
+    <!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
+    <cell v-for="(item, index) in dataList" :key="item.id">
+			<view class="item">
+				<image class="img" :src="item.img"></image>
+				<view class="detail-area">
+					<text class="title">{{item.title}}</text>
+					<view class="bottom">
+						<text class="time">{{item.time}}</text>
+						<text class="depart">{{item.department}}</text>
+					</view>
+				</view>
+			</view>
+    </cell>
+  </list>
+</template>
+
+<script>
+  export default {
+    data () {
+      return {
+        dataList: [
+					{id: "1", title: '山西将统一城乡居民医保门诊慢性病病种',time:'2021-10-24',department:'山西医保局'}, 
+					{id: "2", title: '山西将统一城乡居民医保门诊慢性病病种',time:'2021-10-24',department:'山西医保局'}, 
+					{id: "3", title: '山西将统一城乡居民医保门诊慢性病病种',time:'2021-10-24',department:'山西医保局'}, 
+					]
+      }
+    },
+		//点击搜索框
+		onNavigationBarSearchInputConfirmed(){
+			
+		},
+		methods:{
+			goToSearch(){
+				uni.navigateTo({
+					url: '/pages/policy/search'
+				});
+			}
+		}
+  }
+</script>
+
+<style scoped>
+	.list {
+		background-color: #f0f0f0;
+	}
+	.list .item {
+		flex-direction: row;
+		align-items: stretch;
+		margin:15rpx 15rpx 0;
+		padding:30rpx 20rpx;
+		width:720rpx;
+		border-radius: 10rpx;
+		background-color: #fff;
+	}
+	.list .item .img{
+		width:230rpx;
+		height:150rpx;
+		border:1px solid #ccc;
+		margin-right:25rpx;
+	}
+	.list .item .detail-area {
+		flex:1;
+		justify-content: space-between;
+	}
+	.list .item .detail-area .title {
+		font-size: 28rpx;
+	}
+	.list .item .detail-area .bottom {
+		flex-direction: row;
+		align-items: center;
+	}
+	
+	.detail-area .bottom .time {
+		font-size: 24rpx;
+		margin-right:15rpx;
+	}
+	.detail-area .bottom .depart{
+		font-size: 24rpx;
+	}
+</style>
