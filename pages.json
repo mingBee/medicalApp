@@ -1,5 +1,45 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
+		{
+			"path": "pages/admin/tip",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/admin/disablePhone",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/admin/forgetPsd",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/admin/resetPsd",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/admin/login",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
 		{
 			"path": "pages/tabBar/home/index",
 			"style": {
@@ -43,15 +83,6 @@
 			}
 		},
 		{
-			"path": "pages/admin/login",
-			"style": {
-				"navigationBarTitleText": "申诉",
-				"app-plus": {  
-					"titleNView": false
-				}
-			}
-		},
-		{
 			"path": "pages/policy/search",
 			"style": {
 				"navigationBarTextStyle": "#ffffff",
@@ -92,8 +123,8 @@
 		"backgroundColor": "#F8F8F8",
 		"list": [{
 				"pagePath": "pages/tabBar/home/index",
-				"iconPath": "static/component.png",
-				"selectedIconPath": "static/componentHL.png",
+				"iconPath": "static/img/tabBar/home.png",
+				"selectedIconPath": "static/img/tabBar/home-active.png",
 				"text": "首页"
 			},
 			{
@@ -108,8 +139,8 @@
 				"text": "政策"
 			}, {
 				"pagePath": "pages/tabBar/me/index",
-				"iconPath": "static/template.png",
-				"selectedIconPath": "static/templateHL.png",
+				"iconPath": "static/img/tabBar/center.png",
+				"selectedIconPath": "static/img/tabBar/center-active.png",
 				"text": "我"
 			}
 		]
