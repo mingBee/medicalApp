@@ -43,6 +43,15 @@
 			}
 		},
 		{
+			"path": "pages/admin/login",
+			"style": {
+				"navigationBarTitleText": "申诉",
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+		{
 			"path": "pages/policy/search",
 			"style": {
 				"navigationBarTextStyle": "#ffffff",

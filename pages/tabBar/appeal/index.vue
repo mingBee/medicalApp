@@ -2,8 +2,8 @@
 	<view class="flex flex-dir-column container">
 		
 		<view class="flex tab-part">
-			<view class="flex-1 item" @click="choiceType('1')" :class="{active:sign ==='1'}">未申诉</view>
-			<view class="flex-1 item" @click="choiceType('2')"  :class="{active:sign ==='2'}">已申诉</view>
+			<view class="flex-1 item" @click="choiceType('nofeed')" :class="{active:sign ==='nofeed'}">未申诉</view>
+			<view class="flex-1 item" @click="choiceType('havfeed')"  :class="{active:sign ==='havfeed'}">已申诉</view>
 		</view>
 		
 		<view class="notify-part">
@@ -54,10 +54,11 @@
 </template>
 
 <script>
+	import { getAppealList } from '@/fetch/api/appeal/appeal.js';
 	export default {
 		data(){
 			return{
-				sign:'1',
+				sign:'nofeed',
 				appealList:[
 					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
 					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
@@ -67,14 +68,35 @@
 				]
 			}
 		},
+		mounted(){
+			this.getAppealList();
+		},
 		methods:{
 			choiceType(sign){
 				this.sign = sign;
+				this.getAppealList()
 			},
 			goToAppealForm(){
 				uni.navigateTo({
 					url: '/pages/appeal/form/index'
 				});
+			},
+			/**
+			 * 获取申诉列表
+			 */
+			getAppealList(){
+				let params =  {
+					userId:101,
+					offset:0,
+					limit:10,
+					feedbackState:this.sign,
+					hosId:100
+				}
+				getAppealList(params).then(res=>{
+					if(res){
+						this.appealList = res;
+					}
+				})
 			}
 		}
 	}
