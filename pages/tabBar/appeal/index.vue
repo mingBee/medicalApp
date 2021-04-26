@@ -23,23 +23,23 @@
 					<view class="detail-area">
 						<view class="detail-cell">
 							<view class="title">参保人：</view>
-							<view class="value">{{item.name}}</view>
+							<view class="value">{{item.patientNm}}</view>
 						</view>
 						<view class="detail-cell">
 							<view class="title">住院号：</view>
-							<view class="value">{{item.number}}</view>
+							<view class="value">{{item.hosNum}}</view>
 						</view>
 						<view class="detail-cell">
 							<view class="title">出院诊断：</view>
-							<view class="value">{{item.result}}</view>
+							<view class="value">{{item.outDiag}}</view>
 						</view>
 						<view class="detail-cell">
 							<view class="title">三目名称：</view>
-							<view class="value">{{item.three}}</view>
+							<view class="value">{{item.medProName}}</view>
 						</view>
 						<view class="detail-cell">
 							<view class="title">扣款金额：</view>
-							<view class="value">{{item.amount}}元</view>
+							<view class="value">{{item.carpayAmount}}元</view>
 						</view>
 						
 						<view class="detail-cell btn-cell">
@@ -60,11 +60,6 @@
 			return{
 				sign:'nofeed',
 				appealList:[
-					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
-					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
-					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
-					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30},
-					{name:'杨**',number:'123456',result:'不完全性肠梗阻',three:'J乳果糖口服液',amount:30}
 				]
 			}
 		},
@@ -76,9 +71,10 @@
 				this.sign = sign;
 				this.getAppealList()
 			},
-			goToAppealForm(){
+			goToAppealForm(item){
+				let feedbackId = item.feedbackId;
 				uni.navigateTo({
-					url: '/pages/appeal/form/index'
+					url: `/pages/appeal/form/index?feedbackId=${feedbackId}`
 				});
 			},
 			/**
@@ -90,11 +86,12 @@
 					offset:0,
 					limit:10,
 					feedbackState:this.sign,
-					hosId:100
+					hosId:100,
+					batchId:100
 				}
 				getAppealList(params).then(res=>{
 					if(res){
-						this.appealList = res;
+						this.appealList = res.vioInfoNoFeedbacks;
 					}
 				})
 			}

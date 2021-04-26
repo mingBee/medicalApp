@@ -37,19 +37,21 @@
 		
 		<image-comp></image-comp>
 		
-		<button type="primary">提交</button>
+		<button type="primary" @click="save">提交</button>
 			
 	</view>
 </template>
 
 <script>
 	import imageComp from './components/image'
+	import { saveAppealInfo } from "@/fetch/api/appeal/appeal.js"
 	export default {
 		components:{
 			imageComp
 		},
 		data(){
 			return {
+				feedbackId:'',
 				info:{
 					name:'杨**',
 					number:'123456',
@@ -60,6 +62,21 @@
 				form:{
 					reason:''
 				}
+			}
+		},
+		onLoad(option){
+			this.feedbackId = option.feedbackId;
+		},
+		methods:{
+			save(){
+				let params = {
+					feedbackId:this.feedbackId,
+					checkReason:this.form.reason,
+					imgAddr:''
+				}
+				saveAppealInfo(params).then(res=>{
+					
+				})
 			}
 		}
 	}

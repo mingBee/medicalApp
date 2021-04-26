@@ -28,6 +28,7 @@
 </template>
 <script>
 	import permision from "@/common/permission.js"
+	import { imgUpload } from "@/fetch/api/appeal/appeal.js"
 	var sourceType = [
 		['camera'],
 		['album'],
@@ -45,7 +46,7 @@
 				imageList: [],
 				sourceTypeIndex: 2,
 				sourceType: ['拍照', '相册', '拍照或相册'],
-				sizeTypeIndex: 2,
+				sizeTypeIndex: 0,
 				sizeType: ['压缩', '原图', '压缩或原图'],
 				countIndex: 8,
 				count: [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -83,6 +84,15 @@
 					sizeType: sizeType[this.sizeTypeIndex],
 					count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length : this.count[this.countIndex],
 					success: (res) => {
+						debugger
+						let tempFilePaths = res.tempFilePaths[0];
+						let fileName = res.tempFiles[0].name;
+						let params = {};
+						params.name = 'file';
+						params.uri =tempFilePaths;
+						imgUpload([params]).then(uploadRes=>{
+							console.log(uploadRes)
+						})
 						this.imageList = this.imageList.concat(res.tempFilePaths);
 					},
 					fail: (err) => {
@@ -223,8 +233,8 @@
 	.uni-uploader__input-box {
 		position: relative;
 		margin:10rpx;
-		width: 208rpx;
-		height: 208rpx;
+		width: 158rpx;
+		height: 158rpx;
 		border: 2rpx solid #D9D9D9;
 	}
 	.uni-uploader__input-box:before,

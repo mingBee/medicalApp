@@ -3,13 +3,13 @@
 // import store from '/store/index.js'; //vuex  
 let server_url = '';//请求地址 http://qianye1234.imwork.net/
 // process.env.NODE_ENV === 'development' ? '192.168.0.1' : 'http://***/api' ; //环境配置
-function fetch(options = {}) {
+function upload(options = {}) {
   //  store.state.token && (token = store.state.token); //从vuex中获取登录凭证
   options.url = `${server_url}${options.url}`;
   //配置请求头
-	options.header = Object.assign({},{
-    'content-type': 'application/x-www-form-urlencoded'
-  },options.header)
+	// options.header = Object.assign({},{
+ //    'content-type': 'application/x-www-form-urlencoded'
+ //  },options.header)
 
   return new Promise((resolved, rejected) => {
     //成功
@@ -31,8 +31,8 @@ function fetch(options = {}) {
     options.fail = (err) => {
       rejected(err); //错误
     }
-    uni.request(options);
+    uni.uploadFile(options);
 
   });
 }
-export default fetch;
+export default upload;

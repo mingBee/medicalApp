@@ -13,7 +13,8 @@
 			</view>
 		</view>
 		<view class="center-list">
-			<view class="center-list-item" v-show="hasLogin && hasPwd" @click="goto">
+			<!-- v-show="hasLogin && hasPwd" -->
+			<view class="center-list-item" @click="goTo_resetPsd">
 				<text class="list-icon">&#xe60f;</text>
 				<text class="list-text">修改密码</text>
 				<text class="navigat-arrow">&#xe65e;</text>
@@ -26,7 +27,7 @@
 			</view> -->
 			<!-- #endif -->
 		</view>
-		<view class="center-list">
+		<view class="center-list" @click="goTo_feedback">
 			<view class="center-list-item">
 				<i class="iconfont icon-you"></i>
 <!-- 				<text class="list-icon">&#xe60b;</text> -->
@@ -59,7 +60,7 @@
 			</view>
 		</view>
 		<view class="btn-row">
-			<button v-if="hasLogin" class="primary" type="primary" :loading="logoutBtnLoading"
+			<button v-if="hasLogin" class="primary logout-btn" type="primary" :loading="logoutBtnLoading"
 				@tap="bindLogout">退出登录</button>
 		</view>
 	</view>
@@ -86,6 +87,22 @@
 
 		methods: {
 			// ...mapMutations(['logout']),
+			/**
+			 * 跳转到修改密码
+			 */
+			goTo_resetPsd(){
+				uni.navigateTo({
+					url: '/pages/me/resetPsd'
+				})
+			},
+			/**
+			 * 跳转到意见反馈页面
+			 */
+			goTo_feedback(){
+				uni.navigateTo({
+					url: '/pages/me/feedback'
+				})
+			},
 			bindLogin() {
 				if (!this.hasLogin) {
 					univerifyLogin().catch(err => {
@@ -182,7 +199,7 @@
 		height: 240rpx;
 		padding: 20rpx 20rpx 20rpx 50rpx;
 		box-sizing: border-box;
-		background-color: #0faeff;
+		background-color: #377EB4;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -278,5 +295,8 @@
 	.btn-row {
 		margin-top:100rpx;
 		padding:0 50rpx;
+	}
+	.btn-row .logout-btn {
+		background-color: #377EB4;
 	}
 </style>

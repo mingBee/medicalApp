@@ -1,6 +1,14 @@
 {
 	"pages": [
 		{
+			"path": "pages/tabBar/me/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏  
+				}
+			}
+		},
+		{
 			"path": "pages/admin/tip",
 			"style": {
 				"app-plus": {  
@@ -66,7 +74,28 @@
 		{
 			"path": "pages/tabBar/me/index",
 			"style": {
-				"navigationBarTitleText": "我"
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏  
+				}
+			}
+		},
+		
+		{
+			"path": "pages/me/resetPsd",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"backgroundColor": "#377EB4",
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/me/feedback",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"backgroundColor": "#377EB4",
+				"navigationBarTitleText": "意见反馈"
 			}
 		},
 		
