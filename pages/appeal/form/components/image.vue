@@ -84,16 +84,18 @@
 					sizeType: sizeType[this.sizeTypeIndex],
 					count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length : this.count[this.countIndex],
 					success: (res) => {
-						debugger
-						let tempFilePaths = res.tempFilePaths[0];
-						let fileName = res.tempFiles[0].name;
-						let params = {};
-						params.name = 'file';
-						params.uri =tempFilePaths;
-						imgUpload([params]).then(uploadRes=>{
-							console.log(uploadRes)
+						let list = res.tempFilePaths;
+						if(!list || list.length === 0) return;
+						list.forEach(i=>{
+							let params = {};
+							params.name = 'file';
+							params.uri =i;
+							imgUpload([params]).then(uploadRes=>{
+								
+								this.imageList = this.imageList.push(i);
+							})
 						})
-						this.imageList = this.imageList.concat(res.tempFilePaths);
+						//this.imageList = this.imageList.concat(res.tempFilePaths);
 					},
 					fail: (err) => {
 						console.log("err: ",err);

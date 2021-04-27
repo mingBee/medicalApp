@@ -6,7 +6,10 @@
 		
 		<view class="form">
       <view class="inputWrapper" v-if="isFirstLogin">
-				<input class="input" type="text" v-model="form.hospital" placeholder="请输入医院名称"/>
+				<picker @change="bindPickerChange" :value="index" :range="hospList" class="hosp-picker">
+						<view class="hosp-picker-view">{{curHosp.name || '请选择医院'}}</view>
+				</picker>
+				<!-- <input class="input" type="text" v-model="form.hospital" placeholder="请输入医院名称"/> -->
 			</view>
 			<view class="inputWrapper">
 				<input class="input" type="text" v-model="form.jobNum" :placeholder="loginType === 'jobNum' ? '请输入工号':'请输入手机号'"/>
@@ -37,6 +40,7 @@
 </template>
 
 <script>
+	import { getAllHosp } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
@@ -46,13 +50,28 @@
           psd:''
         },
 				loginType:'jobNum',
-				isFirstLogin:false
+				isFirstLogin:true,
+				hospList:["111","222"],
+				curHosp:{name:''},
+				hosId:''
 			}
 		},
 		onLoad() {
-      
+      this.getHospList();
 		},
 		methods: {
+			/**
+			 * 获取医院列表
+			 */
+			getHospList(){
+				getAllHosp().then(res=>{
+					this.hospList = res;
+				})
+			},
+			bindPickerChange(e) {
+				console.log('picker发送选择改变，携带值为', e.target.value)
+				this.curHosp = this.hospList[e.target.value];
+			},
 			changeLoginType(){
 				if(this.loginType === "jobNum"){
 					this.loginType = "phone";
@@ -109,6 +128,15 @@
 				width: 100%;
 				height: 100%;
 				text-align: left;
+				font-size: 15px;
+			}
+		}
+		.hosp-picker {
+			width:100%;
+			height:100%;
+			.hosp-picker-view {
+				height: 75rpx;
+				line-height: 75rpx;
 				font-size: 15px;
 			}
 		}

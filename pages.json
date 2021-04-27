@@ -1,6 +1,14 @@
 {
 	"pages": [
 		{
+			"path": "pages/admin/login",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+		{
 			"path": "pages/tabBar/me/index",
 			"style": {
 				"app-plus": {
@@ -40,14 +48,7 @@
 				}
 			}
 		},
-		{
-			"path": "pages/admin/login",
-			"style": {
-				"app-plus": {  
-					"titleNView": false
-				}
-			}
-		},
+
 		{
 			"path": "pages/tabBar/home/index",
 			"style": {

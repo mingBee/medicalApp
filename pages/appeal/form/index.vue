@@ -37,8 +37,10 @@
 		
 		<image-comp></image-comp>
 		
-		<button type="primary" @click="save">提交</button>
-			
+		<view class="flex-around flex-dir-row btn-part">
+			<button class="save-btn" @click="save">提交</button>
+			<button class="giveUp-btn" @click="giveUp">放弃申诉</button>
+		</view>	
 	</view>
 </template>
 
@@ -77,6 +79,15 @@
 				saveAppealInfo(params).then(res=>{
 					
 				})
+			},
+			giveUp(){
+				let params = {
+					feedbackId:this.feedbackId,
+					feedbackState:'gvupfeed'
+				}
+				saveAppealInfo(params).then(res=>{
+					
+				})
 			}
 		}
 	}
@@ -110,9 +121,22 @@
 	
 	.reason-part {
 		box-sizing: border-box;
-		width:100%;
+		width:680rpx;
 		min-height:200rpx;
 		border:1px solid #ccc;
 		padding:15rpx;
+	}
+	
+	.btn-part {
+		.save-btn {
+			background-color: #ccc;
+			color:#fff;
+			width:40%;
+		}
+		.giveUp-btn {
+			background-color: red;
+			color:#fff;
+			width:40%;
+		}
 	}
 </style>
