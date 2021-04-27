@@ -4,7 +4,7 @@ import upload from '@/fetch/upload.js'
 
 export function getAppealList(data) {
   return request({
-    url: 'vioFeedback/getAppealList',
+    url: 'api/vioFeedback/getAppealList',
     method: 'GET',
     data
   })
@@ -12,7 +12,7 @@ export function getAppealList(data) {
 
 export function saveAppealInfo(data) {
   return request({
-    url: 'vioFeedback/saveAppealInfo',
+    url: 'api/vioFeedback/saveAppealInfo',
     method: 'POST',
     data
   })
@@ -20,7 +20,7 @@ export function saveAppealInfo(data) {
 
 export function imgUpload(files) {
   return upload({
-    url: 'common/upload',
+    url: 'api/common/upload',
     files
   })
 }

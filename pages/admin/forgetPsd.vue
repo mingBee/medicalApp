@@ -11,7 +11,7 @@
 			</view>	
       <view class="inputWrapper code-part">
 				<input class="input code-input" type="text" v-model="form.code" placeholder="验证码"/>
-				<view class="code-btn">获取验证码</view>
+				<view class="code-btn" @click="verifyCode">获取验证码</view>
 			</view>
 			
 			<view class="loginBtn">
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+	import { verifyCode, forgetPassword } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
@@ -45,6 +46,30 @@
 		},
 		methods: {
 			/**
+			 * 接收验证码
+			 */
+			verifyCode(){
+				verifyCode(this.form.phone).then(res=>{
+					uni.showToast({
+					    title: '验证码发送成功',
+							icon:'none'
+					});
+				})
+			},
+			//忘记密码
+			forgetPassword(){
+				let params = {
+					verifyCode:this.form.code,
+					phonenumber:this.form.phone
+				};
+				forgetPassword().then(res=>{
+					uni.redirectTo({
+						url: `/pages/admin/newPsd?phone=${this.form.phone}`
+					})
+				})
+			},
+
+			/**
 			 * 跳转到手机不可用页 打电话解决问题后重新登录
 			 */
 			goToDisablePhonePage(){
@@ -52,6 +77,7 @@
 					url: '/pages/admin/disablePhone'
 				})
 			}
+			
 		}
 	}
 </script>

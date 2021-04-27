@@ -42,3 +42,7 @@
 .flex-1 {
 	flex:1;
 }
+
+.flex-align-start {
+	align-items: flex-start;
+}

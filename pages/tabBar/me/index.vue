@@ -2,22 +2,21 @@
 	<view class="center">
 		<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">
 			<image class="logo-img" :src="avatarUrl"></image>
-			<view class="logo-title">
-				<view>
+			<view class="flex-between flex-dir-row logo-title">
+				<view class="flex flex-dir-column  flex-align-start">
 					<text class="uer-name">Hi，{{hasLogin ? userName : '您未登录'}}</text>
 					<text class="user-phone" v-if="hasLogin">{{phone}}</text>
 					
 				</view>
-				
-				<text class="go-login navigat-arrow" v-if="hasLogin">&#xe65e;</text>
+				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png" v-if="hasLogin"></image>
 			</view>
 		</view>
 		<view class="center-list">
 			<!-- v-show="hasLogin && hasPwd" -->
 			<view class="center-list-item" @click="goTo_resetPsd">
-				<text class="list-icon">&#xe60f;</text>
+				<image class="item-icon" src="../../../static/img/me/clock.png"></image>
 				<text class="list-text">修改密码</text>
-				<text class="navigat-arrow">&#xe65e;</text>
+				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png"></image>
 			</view>
 			<!-- #ifdef APP-PLUS -->
 <!-- 				<view v-if="hasLogin" class="center-list-item border-bottom" @click="toInvite">
@@ -29,34 +28,33 @@
 		</view>
 		<view class="center-list" @click="goTo_feedback">
 			<view class="center-list-item">
-				<i class="iconfont icon-you"></i>
-<!-- 				<text class="list-icon">&#xe60b;</text> -->
+				<image class="item-icon" src="../../../static/img/me/edit.png"></image>
 				<text class="list-text">意见反馈</text>
-				<text class="navigat-arrow">&#xe65e;</text>
+				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png"></image>
 			</view>
 		</view>
 		
 		<view class="center-list">
 			<view class="center-list-item">
-				<text class="list-icon">&#xe65f;</text>
+				<image class="item-icon" src="../../../static/img/me/star.png"></image>
 				<text class="list-text">用户需知</text>
-				<text class="navigat-arrow">&#xe65e;</text>
+				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png"></image>
 			</view>
 		</view>
 		
 		<view class="center-list">
 			<view class="center-list-item">
-				<text class="list-icon">&#xe639;</text>
+				<image class="item-icon" src="../../../static/img/me/data.png"></image>
 				<text class="list-text">个人资料</text>
-				<text class="navigat-arrow">&#xe65e;</text>
+				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png"></image>
 			</view>
 		</view>
 
 		<view class="center-list">
 			<view class="center-list-item">
-				<text class="list-icon">&#xe614;</text>
+				<image class="item-icon" src="../../../static/img/me/system.png"></image>
 				<text class="list-text">关于应用</text>
-				<text class="navigat-arrow">&#xe65e;</text>
+				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png"></image>
 			</view>
 		</view>
 		<view class="btn-row">
@@ -228,14 +226,11 @@
 	.uer-name {
 		height: 50rpx;
 		line-height: 50rpx;
+		font-size: 30rpx;
 	}
 	
 	.user-phone {
-		font-size: 24rpx;
-	}
-
-	.go-login.navigat-arrow {
-		color: #FFFFFF;
+		font-size: 27rpx;
 	}
 
 	.login-title {
@@ -253,10 +248,23 @@
 	}
 
 	.center-list-item {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 		height: 90rpx;
 		box-sizing: border-box;
 		flex-direction: row;
 		padding: 0rpx 20rpx;
+	}
+	.center-list-item .item-icon {
+		width:40rpx;
+		height:40rpx;
+		margin-right: 20rpx;
+	}
+	.right-arrow-icon {
+		width:19rpx;
+		height:33rpx;
+		margin-right: 20rpx;
 	}
 
 	.border-bottom {
@@ -279,6 +287,7 @@
 		height: 90rpx;
 		line-height: 90rpx;
 		color: #555;
+		font-size: 32rpx;
 		flex: 1;
 		text-align: left;
 	}

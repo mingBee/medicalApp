@@ -9,29 +9,56 @@ export function getAllHosp(data) {
   })
 }
 
-export function saveAppealInfo(data) {
+export function login(data) {
   return request({
-    url: 'vioFeedback/saveAppealInfo',
+    url: 'jwt/login',
     method: 'POST',
     data
   })
 }
 
-export function imgUpload(files) {
-  return upload({
-    url: 'common/upload',
-    files
+export function verifyCode(phoneNum) {
+  return request({
+    url: `api/verify-code/generate/${phoneNum}`,
+    method: 'GET',
   })
 }
 
-// const api = require("./api.js");
-// import Vue from 'vue';
+/**
+ * 忘记密码
+ * @param {Object} phoneNum
+ */
+export function forgetPassword(phoneNum) {
+  return request({
+    url: 'api/app/forgetPassword',
+    method: 'POST',
+  })
+}
+/**
+ * 重置密码
+ * @param {Object} data
+ * verifyCode=348853
+ * phonenumber=18211111111
+ * newPassword=888888
+ */
+export function resetPassword(data) {
+  return request({
+    url: 'api/app/resetPassword',
+    method: 'POST',
+		data
+  })
+}
 
-// // 获取登陆验证码
-// export const userRegister = (params) => {
-//     console.log("请求Vue:",Vue)
-//     return Vue.prototype.$axios.post(
-//         api.REGISTERVERIFICATIONCODE,
-//         params
-//     )
-// }
+/**
+ * 重置密码
+ * @param {Object} data
+ * phonenumber=18211111111
+ * newPassword=888888
+ */
+export function updatePassword(data) {
+  return request({
+    url: 'api/app/updatePass',
+    method: 'POST',
+		data
+  })
+}

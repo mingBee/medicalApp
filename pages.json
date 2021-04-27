@@ -1,14 +1,6 @@
 {
 	"pages": [
 		{
-			"path": "pages/admin/login",
-			"style": {
-				"app-plus": {  
-					"titleNView": false
-				}
-			}
-		},
-		{
 			"path": "pages/tabBar/me/index",
 			"style": {
 				"app-plus": {
@@ -16,6 +8,17 @@
 				}
 			}
 		},
+		{
+			"path": "pages/admin/login",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
+	
+		
+		
 		{
 			"path": "pages/admin/tip",
 			"style": {
@@ -48,17 +51,28 @@
 				}
 			}
 		},
-
+		{
+			"path": "pages/admin/newPsd",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
 		{
 			"path": "pages/tabBar/home/index",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏  
+				}
 			}
 		},
 		{
 			"path": "pages/tabBar/appeal/index",
 			"style": {
-				"navigationBarTitleText": "申诉"
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏  
+				}
 			}
 		},
 		{
@@ -153,8 +167,8 @@
 		"backgroundColor": "#F8F8F8",
 		"list": [{
 				"pagePath": "pages/tabBar/home/index",
-				"iconPath": "static/img/tabBar/home.png",
-				"selectedIconPath": "static/img/tabBar/home-active.png",
+				"iconPath": "static/img/tabBar/nav_index.png",
+				"selectedIconPath": "static/img/tabBar/nav_index_on.png",
 				"text": "首页"
 			},
 			{
@@ -169,8 +183,8 @@
 				"text": "政策"
 			}, {
 				"pagePath": "pages/tabBar/me/index",
-				"iconPath": "static/img/tabBar/center.png",
-				"selectedIconPath": "static/img/tabBar/center-active.png",
+				"iconPath": "static/img/tabBar/nav_center.png",
+				"selectedIconPath": "static/img/tabBar/nav_center_on.png",
 				"text": "我"
 			}
 		]

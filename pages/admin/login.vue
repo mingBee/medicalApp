@@ -6,8 +6,8 @@
 		
 		<view class="form">
       <view class="inputWrapper" v-if="isFirstLogin">
-				<picker @change="bindPickerChange" :value="index" :range="hospList" class="hosp-picker">
-						<view class="hosp-picker-view">{{curHosp.name || '请选择医院'}}</view>
+				<picker @change="bindPickerChange" :range="hospNameList" class="hosp-picker">
+						<view class="hosp-picker-view">{{curHosp.hosArev || '请选择医院'}}</view>
 				</picker>
 				<!-- <input class="input" type="text" v-model="form.hospital" placeholder="请输入医院名称"/> -->
 			</view>
@@ -18,7 +18,7 @@
 				<input class="input" type="password" v-model="form.psd" placeholder="请输入密码"/>
 			</view>
 			
-			<view class="loginBtn" @click="goTo_home">
+			<view class="loginBtn" @click="login">
 				<text class="btnValue">登录</text>
 			</view>
 			
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-	import { getAllHosp } from "@/fetch/api/admin/index.js"
+	import { getAllHosp, login } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
@@ -51,26 +51,106 @@
         },
 				loginType:'jobNum',
 				isFirstLogin:true,
-				hospList:["111","222"],
-				curHosp:{name:''},
+				hospList:[],
+				hospNameList:[],
+				curHosp:{},
 				hosId:''
 			}
 		},
 		onLoad() {
-      this.getHospList();
+      this.hasChooseHosp();
 		},
 		methods: {
+			/**
+			 * 是否选择了医院
+			 */
+			hasChooseHosp(){
+				try {
+				    const hosId = uni.getStorageSync('hosId');
+				    if (hosId) {
+				        this.hosId = hosId;
+								this.isFirstLogin = false;
+				    }else{
+							this.getHospList();
+						}
+				} catch (e) {
+				    // error
+						this.getHospList();
+				}
+			},
 			/**
 			 * 获取医院列表
 			 */
 			getHospList(){
 				getAllHosp().then(res=>{
-					this.hospList = res;
+					if(res && res.length>0){
+						res.forEach(i=>{
+							let temp = {
+								hosArev:i.hosArev,
+								hosId:i.hosId
+							};
+							this.hospList.push(temp);
+							this.hospNameList.push(i.hosArev);
+						});
+					}else{
+						this.hospList = [];
+					}
+					
+				})
+			},
+			/**
+			 * 登录
+			 */
+			login(){
+				// let params = {
+				// 	username:this.form.jobNum,
+				// 	newPassword:this.form.psd,
+				// 	hosId:this.hosId
+				// };
+				// if( !this.hosId && this.hosId !== 0 ){
+				// 	uni.showToast({
+				// 	    title: '请选择医院',
+				// 			icon:'none'
+				// 	});
+				// 	return
+				// }
+				// if( !this.form.jobNum && this.form.jobNum !== 0 ){
+				// 	uni.showToast({
+				// 	    title: '请输入工号',
+				// 			icon:'none'
+				// 	});
+				// 	return
+				// }
+				// if( !this.form.psd && this.form.psd !== 0 ){
+				// 	uni.showToast({
+				// 	    title: '请输入密码',
+				// 			icon:'none'
+				// 	});
+				// 	return
+				// }
+				let params = {
+					username:'admin',
+					password:'admin123',
+					hosId:'0'
+				};
+				login(params).then(res=>{
+					//缓存hosId
+					this.$uniPromiseMethods.setStorage('hosId','0').then(StorageRes=>{
+						console.log('成功缓存hosId');
+					})
+					//缓存token
+					if(res){
+						this.$uniPromiseMethods.setStorageSync('token',res).then(StorageRes=>{
+							console.log('成功缓存token');
+							this.goTo_home();
+						})
+					}
 				})
 			},
 			bindPickerChange(e) {
-				console.log('picker发送选择改变，携带值为', e.target.value)
-				this.curHosp = this.hospList[e.target.value];
+				let item = this.hospList[e.target.value];
+				this.curHosp = item;
+				this.hosId = item.hosId;
 			},
 			changeLoginType(){
 				if(this.loginType === "jobNum"){
@@ -78,6 +158,8 @@
 				}else{
 					this.loginType = "jobNum";
 				}
+				this.form.jobNum='';
+				this.form.psd='';
 			},
 			/**
 			 * 跳转到重置密码页

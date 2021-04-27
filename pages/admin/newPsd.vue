@@ -7,20 +7,13 @@
 		<view class="form">
 			
 			<view class="inputWrapper">
-				<input class="input" type="text" v-model="form.phone" placeholder="请输入手机号"/>
-			</view>	
-      <view class="inputWrapper code-part">
-				<input class="input code-input" type="text" v-model="form.code" placeholder="验证码"/>
-				<view class="code-btn" @click="verifyCode">获取验证码</view>
-			</view>
-			<view class="inputWrapper">
 				<input class="input" type="text" v-model="form.psd" placeholder="请输入新密码"/>
 			</view>
 			<view class="inputWrapper">
 				<input class="input" type="password" v-model="form.confirmPsd" placeholder="请输入再次密码"/>
 			</view>
 			
-			<view class="loginBtn">
+			<view class="loginBtn" @click="updatePassword">
 				<text class="btnValue">确认并登录</text>
 			</view>
 			
@@ -37,37 +30,24 @@
 </template>
 
 <script>
-	import { resetPassword, verifyCode } from "@/fetch/api/admin/index.js"
+	import { updatePassword } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
         form:{
-          phone:'',
-          code:'',
           psd:'',
 					confirmPsd:''
         }
 			}
 		},
-		onLoad() {
-      
+		onLoad(option) {
+      this.phone = option.phone;
 		},
 		methods: {
 			/**
-			 * 接收验证码
-			 */
-			verifyCode(){
-				verifyCode(this.form.phone).then(res=>{
-					uni.showToast({
-					    title: '验证码发送成功',
-							icon:'none'
-					});
-				})
-			},
-			/**
 			 * 修改密码
 			 */
-			resetPassword(){
+			updatePassword(){
 				if(this.form.psd!==this.form.confirmPsd){
 					uni.showToast({
 					    title: '两次输入的密码不一致',
@@ -76,11 +56,10 @@
 					return
 				}
 				let params = {
-					verifyCode:this.form.code,
 					phonenumber:this.phone,
 					newPassword:this.form.psd
 				};
-				resetPassword(params).then(res=>{
+				updatePassword(params).then(res=>{
 					uni.showToast({
 					    title: '密码修改成功，登录中...',
 							icon:'none',
@@ -91,6 +70,7 @@
 							url: '../tabBar/home/index'
 						})
 					},2000);
+					
 				})
 			},
 			/**

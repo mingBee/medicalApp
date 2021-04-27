@@ -26,6 +26,7 @@
 </template>
 
 <script>
+	import { deptCollectDetail } from "@/fetch/api/home/index.js"
   export default {
     data () {
       return {
@@ -34,7 +35,22 @@
 					{id: "2", name: '王**',deduction:'300',violation:3},
 					{id: "3", name: '李**',deduction:'5000',violation:50}]
       }
-    }
+    },
+		methods:{
+			/**
+			 * 获取详情
+			 */
+			deptCollectDetail(){
+				let params ={
+					hosId:100,
+					userId:101,
+					deptNm:'神经内科一组'
+				}
+				deptCollectDetail(params).then(res=>{
+					this.dataList = res || [];
+				})
+			}
+		}
   }
 </script>
 

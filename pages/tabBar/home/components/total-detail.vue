@@ -12,17 +12,17 @@
 				
 				<div class="item">
 					<span class="title">申请次数：</span>
-					<span class="num-area"> <span class="num">2</span>次</span>
+					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.a:info.dept.a}}</span>次</span>
 				</div>
 				
 				<div class="item">
 					<span class="title">拟扣款：</span>
-					<span class="num-area"> <span class="num">1000.00</span>元</span>
+					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.b:info.dept.b}}</span>元</span>
 				</div>
 				
 				<div class="item">
 					<span class="title">违规记录：</span>
-					<span class="num-area"> <span class="num">100</span>条</span>
+					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.c:info.dept.c}}</span>条</span>
 				</div>
 				
 			</div>
@@ -36,15 +36,49 @@
 </template>
 
 <script>
+	import { personCollect, depatCollect } from "@/fetch/api/home/index.js"
 	export default {
 		data(){
 			return {
-				sign:'person'
+				sign:'person',
+				info:{
+					person:{},
+					dept:{}
+				}
 			}
 		},
+		onLoad(){
+			this.personCollect();
+		},
 		methods:{
+			//个人累计情况
+			personCollect(){
+				let params = {
+					hosId:100,
+					userId:101
+				};
+				personCollect(params).then(res=>{
+					this.info.person = res;
+				})
+			},
+			//科室累计情况
+			depatCollect(){
+				let params = {
+					hosId:100,
+					userId:101,
+					deptNm:'神经内科一组'
+				}
+				depatCollect(params).then(res=>{
+					this.info.dept = res;
+				})
+			},
 			choiceType(sign){
 				this.sign = sign;
+				if(sign ==="person"){
+					this.personCollect();
+				}else{
+					this.depatCollect();
+				}
 			},
 			goToDetail(){
 				uni.navigateTo({
