@@ -16,7 +16,7 @@ export function getDetail(data) {
 export function personCollect(data) {
   return request({
     url: 'api/vioBatch/personAppealCollect',
-    method: 'POST',
+    method: 'GET',
     data
   })
 }
@@ -27,7 +27,7 @@ export function personCollect(data) {
 export function depatCollect(data) {
   return request({
     url: 'api/vioBatch/departmentTotalCollect',
-    method: 'POST',
+    method: 'GET',
     data
   })
 }
@@ -38,7 +38,7 @@ export function depatCollect(data) {
 export function deptCollectDetail(data) {
   return request({
     url: 'api/vioBatch/departmentTotalCollectDetail',
-    method: 'POST',
+    method: 'GET',
     data
   })
 }

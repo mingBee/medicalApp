@@ -42,13 +42,8 @@
 		},
 		methods: {
 			/**
-			 * 跳转到手机不可用页 打电话解决问题后重新登录
+			 * 重置密码
 			 */
-			goToDisablePhonePage(){
-				uni.navigateTo({
-					url: '/pages/admin/disablePhone'
-				})
-			},
 			resetPwd(){
 				let params = {
 					oldPassword:this.form.oldPsd,
@@ -56,7 +51,10 @@
 					confirmPassword:this.form.confirmPsd
 				}
 				resetPwd(params).then(res=>{
-					
+					uni.showToast({
+					    title: '密码重置成功',
+							icon:'none'
+					});
 				})
 			}
 			

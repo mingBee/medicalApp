@@ -129,13 +129,13 @@
 				// 	return
 				// }
 				let params = {
-					username:'admin',
+					username:'15523236998',
 					password:'123456',
-					hosId:'0'
+					hosId:'100'
 				};
 				login(params).then(res=>{
 					//缓存hosId
-					this.$uniPromiseMethods.setStorage('hosId','0').then(StorageRes=>{
+					this.$uniPromiseMethods.setStorage('hosId','100').then(StorageRes=>{
 						console.log('成功缓存hosId');
 					})
 					//缓存token

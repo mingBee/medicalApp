@@ -212,7 +212,7 @@
 
 	.logo {
 		height: 240rpx;
-		padding: 20rpx 20rpx 20rpx 50rpx;
+		padding: 50rpx 20rpx 20rpx 50rpx;
 		box-sizing: border-box;
 		background-color: #377EB4;
 		display: flex;

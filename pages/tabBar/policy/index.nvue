@@ -1,9 +1,15 @@
 <template>
-	<view>
+	<view class="container1">
 		
 		<view class="status-bar" :style="{ height: iStatusBarHeight + 'px'}"></view>
 		
 		<list class="list">
+				<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
+					<text class="refresh-txt">{{refreshText}}</text> 
+					<!-- 加载数据中... -->
+					<loading-indicator></loading-indicator>
+				</refresh>
+
 			<header>
 				<view class="search-part" @click="goToSearch">
 					<view class="content">
@@ -13,15 +19,15 @@
 				</view>
 			</header>
 			<!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
-			<cell v-for="(item, index) in dataList" :key="item.id" @click="goToDetail(item.id)">
+			<cell v-for="(item, index) in dataList" :key="item.cmsId" @click="goToDetail(item.cmsId)">
 				<view class="item">
 					<view class="img-area">
-						<image class="main-img" :src="image"></image>
-						<text class="title">{{item.title}}</text>
+						<image class="main-img" :src="item.mainImg"></image>
+						<text class="title">{{item.cmsTitle}}</text>
 					</view>
 					<view class="bottom-area">
-						<text class="txt">{{item.subTitle}}</text>
-						<image class="sub-img" :src="subImage"></image>
+						<text class="txt">{{item.cmsSubti}}</text>
+						<image class="sub-img" :src="item.subImg"></image>
 					</view>
 				</view>
 			</cell>
@@ -30,21 +36,54 @@
 </template>
 
 <script>
+	import { getPolicyList } from "@/fetch/api/policy/index.js"
   export default {
     data () {
       return {
 				iStatusBarHeight:0,
-        dataList: [
-					{id: "1", title: '山西将统一城乡居民医保门诊慢性病病种',subTitle:'4月1日起执行 优化规范为45个病种',}, 
-					{id: "2", title: '山西将统一城乡居民医保门诊慢性病病种',subTitle:'4月1日起执行 优化规范为45个病种' }, 
-					{id: "3", title: '山西将统一城乡居民医保门诊慢性病病种',subTitle:'4月1日起执行 优化规范为45个病种'},
-					]
+				refreshing:false,
+				refreshText:'',
+        dataList: []
       }
     },
 		onLoad() {
-			this.iStatusBarHeight = uni.getSystemInfoSync().statusBarHeight
+			this.iStatusBarHeight = uni.getSystemInfoSync().statusBarHeight;
+			this.onrefresh();
 		},
 		methods:{
+			/**
+			 * 获取政策列表
+			 */
+			getPolicyList(){
+				let params = {
+					cmsTitle:'',
+					offset:0,
+					limit:10
+				}
+				return getPolicyList(params)
+			},
+			onpullingdown(e) {
+				if (this.refreshing) return;
+				if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+					this.refreshText = '↑ 加载中'
+				} else {
+					this.refreshText = '↓ 加载中'
+				}
+			},
+			onrefresh(e) {
+				if (this.refreshing) return;
+				this.refreshing = true;
+				try{
+					this.getPolicyList().then(res=>{
+						this.dataList = res;
+						this.refreshing = false;
+						this.refreshText = '↓ 加载中'
+					})
+				}catch(err){
+					this.refreshing = false;
+					this.refreshText = '↓ 加载中'
+				}
+			},
 			goToSearch(){
 				uni.navigateTo({
 					url: '/pages/policy/search'
@@ -59,9 +98,17 @@
   }
 </script>
 
-<style>
+<style scoped>
+	.container1 {
+		flex:1;
+		border:1px solid green;
+		
+	}
 	.status-bar {
 		background-color: #23A8F2;
+	}
+	.list{
+		flex:1;
 	}
 	.search-part {
 		background-color: #23A8F2;
@@ -88,8 +135,23 @@
 	}
 	
 	.list {
+		width:750rpx;
+	}
+	.list .refresh-part {
+		width:750rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+		padding:20rpx 0;
+	}
+	.list .refresh-part .refresh-txt {
+		color:#333;
+		font-size: 29rpx;
+		margin-right:30rpx;
 	}
 	.list .item {
+		width:750rpx;
 		align-items: stretch;
 		margin:0 20rpx;
 		margin-top:30rpx;
@@ -107,6 +169,9 @@
 		color: red;
 		font-size: 34rpx;
 		z-index:1;
+		width:690rpx;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.list .item .img-area .main-img {
 		width:710rpx;
@@ -122,6 +187,8 @@
 	}
 	.list .item .bottom-area .txt{
 		font-size: 28rpx;
+		display: inline-block;
+		width:500rpx;
 	}
 	.list .item .bottom-area .sub-img{
 		width:160rpx;

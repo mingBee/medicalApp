@@ -2,7 +2,12 @@
 	<view>
 		<fun-bar></fun-bar>
 		<swiper-comp></swiper-comp>
-		<chart-comp></chart-comp>
+		
+		<view class="notify-part">
+			<p class="item" v-if="info.batchDes">{{info.batchDes}}，截止日期：{{info.endTime}}</p>
+		</view>
+		
+		<chart-comp :cdata="info"></chart-comp>
 		<total-detail></total-detail>
 		
 	</view>
@@ -24,10 +29,10 @@
 		},
 		data() {
 			return {
-
+				info:{}
 			}
 		},
-		onLoad(){
+		onShow(){
 			this.getDetail();
 		},
 		methods:{
@@ -38,13 +43,21 @@
 					batchId:100
 				}
 				getDetail(params).then(res=>{
-					
+					this.info = res;
 				})
 			}
 		}
 	}
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+	.notify-part {
+		margin:15rpx 0;
+		.item {
+			padding:10rpx 15px;
+			background-color: #FEFBE8;
+			color:#E5A046;
+			font-size: 25rpx;
+		}
+	}
 </style>

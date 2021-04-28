@@ -1,5 +1,6 @@
 <template>
 	<view class="flex flex-dir-column container">
+		<fun-bar color="#5677FC"></fun-bar>
 		
 		<view class="flex tab-part">
 			<view class="flex-1 item" @click="choiceType('nofeed')" :class="{active:sign ==='nofeed'}">未申诉</view>
@@ -16,7 +17,7 @@
 					
 					<view class="flex flex-dir-row reason-area">
 						<view class="sign"></view>
-						<view class="title">拒付理由：</view>
+						<view class="title">拒付理由:</view>
 						<view class="value">禁忌症：半乳糖血症，肠梗阻，急腹痛。</view>
 					</view>
 					
@@ -55,7 +56,11 @@
 
 <script>
 	import { getAppealList } from '@/fetch/api/appeal/appeal.js';
+	import funBar from '@/pages/common-comp/fun-bar.vue'
 	export default {
+		components:{
+			funBar
+		},
 		data(){
 			return{
 				sign:'nofeed',
@@ -64,7 +69,7 @@
 				]
 			}
 		},
-		mounted(){
+		onShow(){
 			this.getAppealList();
 		},
 		methods:{
@@ -107,16 +112,17 @@
 	}
 	.tab-part {
 		background-color: #5677FC;
-		box-shadow: 0 2px 5px rgba(0,0,0,.5);
+		box-shadow: 0 4px 4px rgba(0,0,0,.5);
 		.item {
 			box-sizing: border-box;
 			padding:20rpx 0;
 			text-align: center;
-			color:rgba(255,255,255,0.7);
+			color:rgba(255,255,255,0.6);
 			border-bottom: 2px solid #5677FC;
 			&.active {
 				border-color: #fff;
 				color: #fff;
+				font-weight: 600;
 			}
 		}
 	}
@@ -149,6 +155,10 @@
 					height:16rpx;
 					border-radius: 50%;
 					background-color: #DD5044;
+				}
+				.title {
+					display: inline-block;
+					min-width:200rpx;
 				}
 			}
 			.detail-area {

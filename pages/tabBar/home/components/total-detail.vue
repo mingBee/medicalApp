@@ -11,18 +11,18 @@
 			<div class="detail-part">
 				
 				<div class="item">
-					<span class="title">申请次数：</span>
-					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.a:info.dept.a}}</span>次</span>
+					<span class="title">{{sign ==='person'?'申请次数':'违规医生'}}：</span>
+					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.batchs:info.dept.doctorSize}}</span>次</span>
 				</div>
 				
 				<div class="item">
 					<span class="title">拟扣款：</span>
-					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.b:info.dept.b}}</span>元</span>
+					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.batchTotal:info.dept.deptTotal}}</span>元</span>
 				</div>
 				
 				<div class="item">
 					<span class="title">违规记录：</span>
-					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.c:info.dept.c}}</span>条</span>
+					<span class="num-area"> <span class="num">{{sign ==='person'?info.person.batchVioSize:info.dept.deptVioSize}}</span>条</span>
 				</div>
 				
 			</div>
@@ -47,7 +47,7 @@
 				}
 			}
 		},
-		onLoad(){
+		mounted(){
 			this.personCollect();
 		},
 		methods:{

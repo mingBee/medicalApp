@@ -1,27 +1,24 @@
 <template>
-  <list>
-		<refresh>加载中</refresh>
+  <list class="container">
     <!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
     <cell v-for="(item, index) in dataList" :key="item.id" class="item" :loadmoreoffset="20">
 			
 			<view class="area">
 				<text class="title">医生:</text>
-				<text class="value">{{item.name}}</text>
+				<text class="value">{{item.user_name}}</text>
 			</view>
 			
 			<view class="area">
 				<text class="title">拟扣款:</text>
-				<text class="value">{{item.deduction}}元</text>
+				<text class="value">{{item.carpay_total_amount}}元</text>
 			</view>
 			
 			<view class="area">
 				<text class="title">违规记录:</text>
-				<text class="value">{{item.violation}}条</text>
+				<text class="value">{{item.userVioSize}}条</text>
 			</view>
       
     </cell>
-		
-		<loading>加载更多</loading>
   </list>
 </template>
 
@@ -30,12 +27,12 @@
   export default {
     data () {
       return {
-        dataList: [
-					{id: "1", name: '张**',deduction:'3000',violation:40}, 
-					{id: "2", name: '王**',deduction:'300',violation:3},
-					{id: "3", name: '李**',deduction:'5000',violation:50}]
+        dataList: []
       }
     },
+		onLoad(){
+			this.deptCollectDetail();
+		},
 		methods:{
 			/**
 			 * 获取详情
@@ -54,7 +51,11 @@
   }
 </script>
 
-<style >
+<style scoped>
+	.container {
+		flex:1;
+		border:1px solid #ccc;
+	}
 	.item {
 		flex-direction: row;
 		justify-content: space-between;

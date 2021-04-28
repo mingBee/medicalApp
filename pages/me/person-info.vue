@@ -13,7 +13,7 @@
 		
 		<view class="detail-part">
 			<view class="row">
-				<text class="title">您的医院：</text>
+				<text class="title">医院：</text>
 				<text class="content"></text>
 			</view>
 			
@@ -66,7 +66,7 @@
 <style lang="scss" scoped>
 	.top-part {
 		position: relative;
-		height:21vh;
+		height:18vh;
 		background-color: #377EB4;
 		border-bottom-left-radius: 30%;
 		border-bottom-right-radius: 30%;
@@ -80,37 +80,38 @@
 			height:100rpx;
 			z-index: 1;
 			border:1px solid #f0f0f0;
-			border-radius:20rpx;
+			border-radius:15rpx;
 			padding:20rpx 0;
 			.avatar-center {
 				position: relative;
 				bottom: 90rpx;
 			}
 			.avatar {
-				width: 120rpx;
-				height: 120rpx;
+				width: 140rpx;
+				height: 140rpx;
 				border-radius: 50%;
 				margin-bottom:15rpx;
 			}
 			.phone {
-				font-size: 26rpx;
+				font-size: 28rpx;
+				font-weight: 600;
 				color: #333;
 			}
 		}
 	}
 	.detail-part {
-		padding: 150rpx 200rpx;
+		padding: 150rpx 120rpx;
 		.row {
-			padding:15rpx 0 ;
+			padding:20rpx 0 ;
 			.title {
 				display: inline-block;
-				font-size: 27rpx;
+				font-size: 31rpx;
 				font-weight: 600;
 				width:150rpx;
-				text-align: left;
+				text-align: right;
 			}
 			.content {
-				font-size: 27rpx;
+				font-size: 31rpx;
 			}
 		}
 	}

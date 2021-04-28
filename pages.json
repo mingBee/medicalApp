@@ -11,14 +11,12 @@
 		{
 			"path": "pages/tabBar/me/index",
 			"style": {
+				"navigationBarTextStyle": "#ffffff",
 				"app-plus": {
 					"titleNView": false //禁用原生导航栏  
 				}
 			}
 		},
-		
-		
-		
 		
 		{
 			"path": "pages/admin/tip",
@@ -72,6 +70,7 @@
 			"path": "pages/tabBar/appeal/index",
 			"style": {
 				"app-plus": {
+					"navigationBarTextStyle": "#ffffff",
 					"titleNView": false //禁用原生导航栏  
 				}
 			}

@@ -19,6 +19,12 @@
 	var canvasObj = {};
 
 	export default {
+		props:{
+			cdata:{
+				type:Object,
+				default:{}
+			}
+		},
 		data() {
 			return {
 				cWidth: '',
@@ -41,12 +47,30 @@
 			});
 			//#endif
 			this.cWidth = uni.upx2px(750);
-			this.cHeight = uni.upx2px(500);
-			this.getServerData();
+			this.cHeight = uni.upx2px(430);
+		},
+		watch:{
+			cdata:{
+				handler(newV,oldV){
+					if(newV.hasAppealNum || newV.hasAppealNum == 0){
+						let data = [
+							{
+								name: "未申诉",
+								data: Number(newV.noAppealNum)
+							},
+							{
+								name: "已申诉",
+								data: Number(newV.hasAppealNum)
+							}
+						]
+						this.getServerData(data);
+					}		
+				},
+				deep:true
+			}
 		},
 		methods: {
-			getServerData() {
-				
+			getServerData(data) {
 				// uni.showLoading({
 				// 	title: "正在加载数据..."
 				// })
@@ -63,37 +87,16 @@
 				// 		uni.hideLoading();
 				// 	}
 				// });
-				let data =  {
-						"series": [{
-							"name": "一班",
-							"data": 50
-						}, {
-							"name": "二班",
-							"data": 30
-						}, {
-							"name": "三班",
-							"data": 20
-						}, {
-							"name": "四班",
-							"data": 18
-						}, {
-							"name": "五班",
-							"data": 8
-						}]
-					}
 					_self.fillData(data);
 			},
 			fillData(data) {
-				let Ring = {
-					series: []
-				};
-				Ring.series = data.series;
-				for (let i = 0; i < Ring.series.length; i++) {
-					Ring.series[i].format = () => {
-						return Ring.series[i].name + Ring.series[i].data
+				let Ring = [];
+				Ring = data;
+				for (let i = 0; i < Ring.length; i++) {
+					Ring[i].format = () => {
+						return Ring[i].name + Ring[i].data
 					};
 				}
-				console.log(Ring);
 				this.showRing("canvasRing", Ring);
 			},
 			showRing(canvasId, chartData) {
@@ -105,9 +108,9 @@
 					padding: [5, 5, 5, 5],
 					legend: {
 						show: true,
-						position: 'right',
+						position: 'center',
 						float: 'center',
-						itemGap: 10,
+						itemGap: 30,
 						padding: 5,
 						lineHeight: 26,
 						margin: 5,
@@ -115,16 +118,16 @@
 						//borderColor :'rgba(41,198,90,0.5)',
 						borderWidth: 1
 					},
-					title: {
-						name: '70%',
-						color: '#7cb5ec',
-						fontSize: 25 * _self.pixelRatio,
-					},
-					subtitle: {
-						name: '收益率',
-						color: '#666666',
-						fontSize: 15 * _self.pixelRatio,
-					},
+					// title: {
+					// 	name: '70%',
+					// 	color: '#7cb5ec',
+					// 	fontSize: 25 * _self.pixelRatio,
+					// },
+					// subtitle: {
+					// 	name: '收益率',
+					// 	color: '#666666',
+					// 	fontSize: 15 * _self.pixelRatio,
+					// },
 					extra: {
 						pie: {
 							lableWidth: 15,
@@ -134,8 +137,8 @@
 					},
 					background: '#FFFFFF',
 					pixelRatio: _self.pixelRatio,
-					series: chartData.series,
-					animation: false,
+					series: chartData,
+					animation: true,
 					width: _self.cWidth * _self.pixelRatio,
 					height: _self.cHeight * _self.pixelRatio,
 					disablePieStroke: true,
@@ -161,7 +164,7 @@
 	.qiun-charts {
 		/* width: 750rpx; */
 		/* width:100%; */
-		height: 500rpx;
+		height: 430rpx;
 		background-color: #FFFFFF;
 	}
 

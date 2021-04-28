@@ -1,9 +1,12 @@
 import request from '@/fetch/fetch.js'
-import upload from '@/fetch/upload.js'
-
-export function getAppealList(data) {
+/**
+ * 获取政策列表（刷新）
+ * cmsTitle=印&offset=0&limit=10
+ * @param {Object} data
+ */
+export function getPolicyList(data) {
   return request({
-    url: 'api/vioFeedback/getAppealList',
+    url: 'api/cmsInfo/policyList',
     method: 'GET',
     data
   })
@@ -14,12 +17,5 @@ export function saveAppealInfo(data) {
     url: 'api/vioFeedback/saveAppealInfo',
     method: 'POST',
     data
-  })
-}
-
-export function imgUpload(files) {
-  return upload({
-    url: 'api/common/upload',
-    files
   })
 }
