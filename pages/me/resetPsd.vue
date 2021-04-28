@@ -16,7 +16,7 @@
 				<input class="input" type="text" v-model="form.confirmPsd" placeholder="请再次输入密码"/>
 			</view>	
 			
-			<view class="loginBtn">
+			<view class="loginBtn" @click="resetPwd">
 				<text class="btnValue">提交</text>
 			</view>
 			
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+	import { resetPwd } from "@/fetch/api/me/index.js"
 	export default {
 		data() {
 			return {
@@ -47,7 +48,18 @@
 				uni.navigateTo({
 					url: '/pages/admin/disablePhone'
 				})
+			},
+			resetPwd(){
+				let params = {
+					oldPassword:this.form.oldPsd,
+					newPassword:this.form.newPsd,
+					confirmPassword:this.form.confirmPsd
+				}
+				resetPwd(params).then(res=>{
+					
+				})
 			}
+			
 		}
 	}
 </script>

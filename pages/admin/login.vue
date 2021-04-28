@@ -28,7 +28,7 @@
 					<text @click="changeLoginType">{{ loginType === 'jobNum' ? "手机登录":"工号登录" }}</text>
 				</view>
 				
-				<view class="forgot-btn" @click="goTo_resetPsd">
+				<view class="forgot-btn" @click="goTo_forgetPsd">
 					<text>找回密码</text>
 				</view>
 				
@@ -130,7 +130,7 @@
 				// }
 				let params = {
 					username:'admin',
-					password:'admin123',
+					password:'123456',
 					hosId:'0'
 				};
 				login(params).then(res=>{
@@ -164,9 +164,9 @@
 			/**
 			 * 跳转到重置密码页
 			 */
-			goTo_resetPsd() {
+			goTo_forgetPsd() {
 				uni.navigateTo({
-					url: '/pages/admin/resetPsd'
+					url: '/pages/admin/forgetPsd'
 				})
 			},
 			/**

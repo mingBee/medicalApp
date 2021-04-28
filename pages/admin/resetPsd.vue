@@ -20,7 +20,7 @@
 				<input class="input" type="password" v-model="form.confirmPsd" placeholder="请输入再次密码"/>
 			</view>
 			
-			<view class="loginBtn">
+			<view class="loginBtn" @click="resetPassword">
 				<text class="btnValue">确认并登录</text>
 			</view>
 			
@@ -62,6 +62,7 @@
 					    title: '验证码发送成功',
 							icon:'none'
 					});
+					this.form.code = res;
 				})
 			},
 			/**
@@ -77,7 +78,7 @@
 				}
 				let params = {
 					verifyCode:this.form.code,
-					phonenumber:this.phone,
+					phonenumber:this.form.phone,
 					newPassword:this.form.psd
 				};
 				resetPassword(params).then(res=>{

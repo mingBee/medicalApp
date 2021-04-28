@@ -42,7 +42,7 @@
 			</view>
 		</view>
 		
-		<view class="center-list">
+		<view class="center-list" @click="goTo_personInfo">
 			<view class="center-list-item">
 				<image class="item-icon" src="../../../static/img/me/data.png"></image>
 				<text class="list-text">个人资料</text>
@@ -50,7 +50,7 @@
 			</view>
 		</view>
 
-		<view class="center-list">
+		<view class="center-list" @click="goTo_about">
 			<view class="center-list-item">
 				<image class="item-icon" src="../../../static/img/me/system.png"></image>
 				<text class="list-text">关于应用</text>
@@ -101,6 +101,23 @@
 					url: '/pages/me/feedback'
 				})
 			},
+			/**
+			 * 跳转到关于应用
+			 */
+			goTo_about(){
+				uni.navigateTo({
+					url: '/pages/me/about'
+				})
+			},
+			/**
+			 * 跳转到个人详情页面
+			 */
+			goTo_personInfo(){
+				uni.navigateTo({
+					url: '/pages/me/person-info'
+				})
+			},
+			
 			bindLogin() {
 				if (!this.hasLogin) {
 					univerifyLogin().catch(err => {

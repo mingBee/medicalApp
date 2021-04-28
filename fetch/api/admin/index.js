@@ -3,7 +3,7 @@ import request from '@/fetch/fetch.js'
 
 export function getAllHosp(data) {
   return request({
-    url: 'hosInfo/getAllHos',
+    url: 'api/hosInfo/getAllHos',
     method: 'GET',
     data
   })

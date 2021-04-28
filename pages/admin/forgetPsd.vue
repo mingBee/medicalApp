@@ -14,7 +14,7 @@
 				<view class="code-btn" @click="verifyCode">获取验证码</view>
 			</view>
 			
-			<view class="loginBtn">
+			<view class="loginBtn" @click="forgetPassword">
 				<text class="btnValue">修改密码</text>
 			</view>
 			
@@ -54,6 +54,7 @@
 					    title: '验证码发送成功',
 							icon:'none'
 					});
+					this.form.code = res;
 				})
 			},
 			//忘记密码

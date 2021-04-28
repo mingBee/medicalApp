@@ -1,14 +1,6 @@
 {
 	"pages": [
 		{
-			"path": "pages/tabBar/me/index",
-			"style": {
-				"app-plus": {
-					"titleNView": false //禁用原生导航栏  
-				}
-			}
-		},
-		{
 			"path": "pages/admin/login",
 			"style": {
 				"app-plus": {  
@@ -16,7 +8,16 @@
 				}
 			}
 		},
-	
+		{
+			"path": "pages/tabBar/me/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏  
+				}
+			}
+		},
+		
+		
 		
 		
 		{
@@ -87,11 +88,12 @@
 			}
 		},
 		{
-			"path": "pages/tabBar/me/index",
+			"path": "pages/me/person-info",
 			"style": {
-				"app-plus": {
-					"titleNView": false //禁用原生导航栏  
-				}
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"backgroundColor": "#377EB4",
+				"navigationBarTitleText": "个人信息"
 			}
 		},
 		
@@ -102,6 +104,15 @@
 				"navigationBarBackgroundColor": "#377EB4",
 				"backgroundColor": "#377EB4",
 				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/me/about",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"backgroundColor": "#377EB4",
+				"navigationBarTitleText": "关于我们"
 			}
 		},
 		{
