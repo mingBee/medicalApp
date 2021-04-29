@@ -2,19 +2,23 @@
 	<view>
 		
 		<view class="top-part">
-			<view class="title">{{info.title}}</view>
+			<view class="title">{{info.cmsTitle}}</view>
 			
 			<view class="info-part">
-				<text class="time">{{info.time}}</text>
-				<text class="department">{{info.department}}</text>
+				<text class="department">{{info.pubInst}}</text>
+			</view>
+			
+			<view class="info-part">
+				<text class="time">{{info.pubDate}}</text>
 			</view>
 		</view>
 		
-		<view class="content" v-html="info.content"></view>
+		<view class="content" v-html="info.cmsCont"></view>
 	</view>
 </template>
 
 <script>
+	import { getPolicyList } from "@/fetch/api/policy/index.js"
 	export default {
 		data(){
 			return {
@@ -24,6 +28,25 @@
 					department:'山西医保局',
 					content:"aaaaaaaaa"
 				}
+			}
+		},
+		onLoad(){
+			this.policyId = uni.getStorageSync('policyId');
+			this.getPolicyList();
+		},
+		methods:{
+			/**
+			 * 获取政策详情
+			 */
+			getPolicyList(){
+				let params = {
+					offset: 0,
+					limit: 1,
+					cmsId: this.policyId
+				}
+				getPolicyList(params).then(res=>{
+					this.info = res[0] || {};
+				})
 			}
 		}
 	}
@@ -53,6 +76,6 @@
 		}
 	}
 	.content {
-		padding:25rpx;
+		padding:15rpx;
 	}
 </style>

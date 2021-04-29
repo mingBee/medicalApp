@@ -1,5 +1,6 @@
 {
 	"pages": [
+		
 		{
 			"path": "pages/admin/login",
 			"style": {
@@ -160,6 +161,9 @@
 		{
 			"path": "pages/policy/detail",
 			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"backgroundColor": "#377EB4",
 				"navigationBarTitleText": "政策详情"
 			}
 		}

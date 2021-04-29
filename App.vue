@@ -2,6 +2,15 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			// setTimeout(()=>{
+			// 	var prinf = plus.push.getClientInfo();
+			// 	var cid = prinf.clientid;
+			// 	uni.showToast({
+			// 	    title: cid,
+			// 			icon:'none',
+			// 			duration:10000
+			// 	});
+			// },5000)
 		},
 		onShow: function() {
 			console.log('App Show')

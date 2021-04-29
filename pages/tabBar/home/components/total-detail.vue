@@ -3,7 +3,7 @@
 		
 		<div class="flex tab-part">
 			<div class="flex-1 item" @click="choiceType('person')" :class="{active:sign ==='person'}">个人全年累计情况</div>
-			<div class="flex-1 item" @click="choiceType('department')"  :class="{active:sign ==='department'}">科室累计情况</div>
+			<div class="flex-1 item" @click="choiceType('department')"  :class="{active:sign ==='department'}" v-if="!isDoc">科室累计情况</div>
 		</div>
 		
 		<div class="flex-between main">
@@ -43,19 +43,24 @@
 				sign:'person',
 				info:{
 					person:{},
-					dept:{}
-				}
+					dept:{},
+				},
+				isDoc:true
 			}
 		},
 		mounted(){
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.hosId = uni.getStorageSync('hosId');
+			this.isDoc = this.userInfo.docTitle === "主治医生"? true : false;
 			this.personCollect();
 		},
 		methods:{
 			//个人累计情况
+			
 			personCollect(){
 				let params = {
-					hosId:100,
-					userId:101
+					hosId:this.hosId,
+					userId:this.userInfo.userId
 				};
 				personCollect(params).then(res=>{
 					this.info.person = res;
@@ -64,9 +69,9 @@
 			//科室累计情况
 			depatCollect(){
 				let params = {
-					hosId:100,
-					userId:101,
-					deptNm:'神经内科一组'
+					hosId:this.hosId,
+					userId:this.userInfo.userId,
+					deptNm:this.userInfo.deptNm
 				}
 				depatCollect(params).then(res=>{
 					this.info.dept = res;

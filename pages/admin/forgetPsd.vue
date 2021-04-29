@@ -63,7 +63,7 @@
 					verifyCode:this.form.code,
 					phonenumber:this.form.phone
 				};
-				forgetPassword().then(res=>{
+				forgetPassword(params).then(res=>{
 					uni.redirectTo({
 						url: `/pages/admin/newPsd?phone=${this.form.phone}`
 					})

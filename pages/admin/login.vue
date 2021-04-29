@@ -40,7 +40,7 @@
 </template>
 
 <script>
-	import { getAllHosp, login } from "@/fetch/api/admin/index.js"
+	import { getAllHosp, login ,getUserInfo } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
@@ -133,6 +133,7 @@
 					password:'123456',
 					hosId:'100'
 				};
+				
 				login(params).then(res=>{
 					//缓存hosId
 					this.$uniPromiseMethods.setStorage('hosId','100').then(StorageRes=>{
@@ -142,7 +143,17 @@
 					if(res){
 						this.$uniPromiseMethods.setStorageSync('token',res).then(StorageRes=>{
 							console.log('成功缓存token');
-							this.goTo_home();
+							getUserInfo().then(userInfoRes=>{
+								let userInfo = {
+									userId:userInfoRes.userId,
+									docTitle:userInfoRes.docTitle,
+									deptNm:userInfoRes.deptNm
+								}
+								this.$uniPromiseMethods.setStorageSync('userInfo',userInfo).then(userStorage=>{
+									console.log('成功缓存用户信息');
+									this.goTo_home();
+								})
+							})
 						})
 					}
 				})

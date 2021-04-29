@@ -28,10 +28,11 @@ export function verifyCode(phoneNum) {
  * 忘记密码
  * @param {Object} phoneNum
  */
-export function forgetPassword(phoneNum) {
+export function forgetPassword(data) {
   return request({
     url: 'api/app/forgetPassword',
     method: 'POST',
+		data
   })
 }
 /**
@@ -59,6 +60,18 @@ export function updatePassword(data) {
   return request({
     url: 'api/app/updatePass',
     method: 'POST',
+		data
+  })
+}
+
+/**
+ * 获取用户信息
+ * @param {Object} data
+ */
+export function getUserInfo(data) {
+  return request({
+    url: 'api/user/personInfo',
+    method: 'GET',
 		data
   })
 }

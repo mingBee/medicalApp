@@ -31,6 +31,8 @@
       }
     },
 		onLoad(){
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.hosId = uni.getStorageSync('hosId');
 			this.deptCollectDetail();
 		},
 		methods:{
@@ -39,9 +41,9 @@
 			 */
 			deptCollectDetail(){
 				let params ={
-					hosId:100,
-					userId:101,
-					deptNm:'神经内科一组'
+					hosId:this.hosId,
+					userId:this.userInfo.userId,
+					deptNm:this.userInfo.deptNm
 				}
 				deptCollectDetail(params).then(res=>{
 					this.dataList = res || [];

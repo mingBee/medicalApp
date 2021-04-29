@@ -1,9 +1,9 @@
 //把配置项单独处理
 
 // import store from '/store/index.js'; //vuex  
-let server_url = '';//请求地址 
+let server_url = '';//请求地址   http://qianye1234.imwork.net/
 //#ifdef APP-PLUS
-  server_url = 'http://qianye1234.imwork.net/'
+  server_url = 'http://172.16.52.43:8090/'
 //#endif
 // process.env.NODE_ENV === 'development' ? '192.168.0.1' : 'http://***/api' ; //环境配置
 function fetch(options = {}) {

@@ -43,7 +43,11 @@
 				iStatusBarHeight:0,
 				refreshing:false,
 				refreshText:'',
-        dataList: []
+        dataList: [],
+				pageParams:{
+					offset:0,
+					limit:10
+				}
       }
     },
 		onLoad() {
@@ -57,8 +61,8 @@
 			getPolicyList(){
 				let params = {
 					cmsTitle:'',
-					offset:0,
-					limit:10
+					offset:this.pageParams.offset,
+					limit:this.pageParams.limit
 				}
 				return getPolicyList(params)
 			},
@@ -74,10 +78,11 @@
 				if (this.refreshing) return;
 				this.refreshing = true;
 				try{
+					this.pageParams.offset = 0;
 					this.getPolicyList().then(res=>{
 						this.dataList = res;
 						this.refreshing = false;
-						this.refreshText = '↓ 加载中'
+						this.refreshText = '↓ 加载中';
 					})
 				}catch(err){
 					this.refreshing = false;
@@ -89,10 +94,12 @@
 					url: '/pages/policy/search'
 				});
 			},
-			goToDetail(){
-				uni.navigateTo({
-					url: '/pages/policy/detail'
-				});
+			goToDetail(id){
+				this.$uniPromiseMethods.setStorageSync('policyId',id).then(StorageRes=>{
+					uni.navigateTo({
+						url: '/pages/policy/detail'
+					});
+				})
 			}
 		}
   }
