@@ -1,5 +1,9 @@
 <template>
-	<view :style="{height:barHeight+'px',backgroundColor:color}"></view>
+	<view>
+		<view :style="{height:barHeight+'px'}"></view>
+		<view class="fix-part" :style="{height:barHeight+'px',backgroundColor:color}"></view>
+	</view>
+	
 </template>
 
 <script>
@@ -26,5 +30,11 @@
 	}
 </script>
 
-<style>
+<style scoped>
+	.fix-part {
+		position: fixed;
+		top: 0;
+		width:750rpx;
+		z-index: 1;
+	}
 </style>

@@ -1,9 +1,9 @@
 <template>
-	<view class="container1">
+	<view class="container">
 		
 		<view class="status-bar" :style="{ height: iStatusBarHeight + 'px'}"></view>
 		
-		<list class="list">
+		<list class="list" :loadmoreoffset="10" @loadmore ="loadMore" ref="list">
 				<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
 					<text class="refresh-txt">{{refreshText}}</text> 
 					<!-- 加载数据中... -->
@@ -19,8 +19,8 @@
 				</view>
 			</header>
 			<!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
-			<cell v-for="(item, index) in dataList" :key="item.cmsId" @click="goToDetail(item.cmsId)">
-				<view class="item">
+			<cell >
+				<view class="item" v-for="(item, index) in dataList" :key="item.cmsId" @click="goToDetail(item.cmsId)">
 					<view class="img-area">
 						<image class="main-img" :src="item.mainImg"></image>
 						<text class="title">{{item.cmsTitle}}</text>
@@ -31,6 +31,15 @@
 					</view>
 				</view>
 			</cell>
+			
+			<cell v-if="isLoading">
+				<text class="loadmore-part">加载中...</text>
+			</cell>
+			
+			<cell v-if="isFinish">
+				<text class="loadmore-part">全部加载完成</text>
+			</cell>
+			
 		</list>
 	</view>
 </template>
@@ -42,6 +51,8 @@
       return {
 				iStatusBarHeight:0,
 				refreshing:false,
+				isLoading:false,
+				isFinish:false,
 				refreshText:'',
         dataList: [],
 				pageParams:{
@@ -61,7 +72,7 @@
 			getPolicyList(){
 				let params = {
 					cmsTitle:'',
-					offset:this.pageParams.offset,
+					offset:this.pageParams.offset * this.pageParams.limit,
 					limit:this.pageParams.limit
 				}
 				return getPolicyList(params)
@@ -77,16 +88,40 @@
 			onrefresh(e) {
 				if (this.refreshing) return;
 				this.refreshing = true;
+				this.isFinish = false;
 				try{
 					this.pageParams.offset = 0;
 					this.getPolicyList().then(res=>{
 						this.dataList = res;
 						this.refreshing = false;
 						this.refreshText = '↓ 加载中';
+						if(res.length < this.pageParams.limit){
+							this.isFinish = true;
+						}
 					})
 				}catch(err){
 					this.refreshing = false;
 					this.refreshText = '↓ 加载中'
+				}
+			},
+			loadMore(){
+				if(this.isFinish || this.isLoading) return;
+				try{
+					this.pageParams.offset += 1;
+					this.isLoading = true;
+					this.getPolicyList().then(res=>{
+						this.dataList = this.dataList.concat( res );
+						 setTimeout(()=>{
+							 this.isLoading = false;
+							 if(res.length < this.pageParams.limit){
+							 	this.isFinish = true;
+							 }
+						 },0)
+					})
+				}catch(err){
+					this.pageParams.offset -= 1;
+					this.isLoading = false;
+					this.isFinish = false;
 				}
 			},
 			goToSearch(){
@@ -95,27 +130,30 @@
 				});
 			},
 			goToDetail(id){
-				this.$uniPromiseMethods.setStorageSync('policyId',id).then(StorageRes=>{
-					uni.navigateTo({
-						url: '/pages/policy/detail'
-					});
-				})
+				uni.setStorage({
+				    key: 'policyId',
+				    data: id,
+				    success: function () {
+							uni.navigateTo({
+								url: '/pages/policy/detail'
+							});
+				    }
+				});
 			}
 		}
   }
 </script>
 
 <style scoped>
-	.container1 {
+	.container {
 		flex:1;
-		border:1px solid green;
-		
 	}
 	.status-bar {
 		background-color: #23A8F2;
 	}
 	.list{
 		flex:1;
+		padding-bottom:30rpx;
 	}
 	.search-part {
 		background-color: #23A8F2;
@@ -150,7 +188,7 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: row;
-		padding:20rpx 0;
+		padding:30rpx 0;
 	}
 	.list .refresh-part .refresh-txt {
 		color:#333;
@@ -158,13 +196,14 @@
 		margin-right:30rpx;
 	}
 	.list .item {
+		background-color: #fff;
 		width:750rpx;
 		align-items: stretch;
-		margin:0 20rpx;
-		margin-top:30rpx;
+		margin:15rpx 20rpx;
 		width:710rpx;
 		border-radius: 10rpx;
 		border:1px solid #ccc;
+		box-shadow:0 0 3px 3px #ccc;
 	}
 	.list .item .img-area{
 		position: relative;
@@ -172,13 +211,15 @@
 	.list .item .img-area .title {
 		position:absolute;
 		bottom: 10rpx;
-		left:10rpx;
-		color: red;
+		left:0;
+		right:0;
+		padding: 15rpx 10rpx;
+		color:#fff;
 		font-size: 34rpx;
 		z-index:1;
-		width:690rpx;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		background-color: rgba(0,0,0,.5);
 	}
 	.list .item .img-area .main-img {
 		width:710rpx;
@@ -201,5 +242,11 @@
 		width:160rpx;
 		height:90rpx;
 		border:1px solid #ccc;
+	}
+	.list .loadmore-part {
+		text-align: center;
+		padding:15rpx 0 20rpx;
+		font-size: 28rpx;
+		color:#24AEF3;
 	}
 </style>

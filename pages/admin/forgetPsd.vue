@@ -49,6 +49,13 @@
 			 * 接收验证码
 			 */
 			verifyCode(){
+				if( !this.form.phone ){
+					uni.showToast({
+					    title: '请先填写手机号',
+							icon:'none'
+					});
+					return
+				}
 				verifyCode(this.form.phone).then(res=>{
 					uni.showToast({
 					    title: '验证码发送成功',
@@ -59,6 +66,20 @@
 			},
 			//忘记密码
 			forgetPassword(){
+				if( !this.form.phone ){
+					uni.showToast({
+					    title: '请先填写手机号',
+							icon:'none'
+					});
+					return
+				}
+				if( !this.form.code ){
+					uni.showToast({
+					    title: '请先填写验证码',
+							icon:'none'
+					});
+					return
+				}
 				let params = {
 					verifyCode:this.form.code,
 					phonenumber:this.form.phone

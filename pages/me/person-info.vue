@@ -14,22 +14,22 @@
 		<view class="detail-part">
 			<view class="row">
 				<text class="title">医院：</text>
-				<text class="content"></text>
+				<text class="content">{{info.hosNm}}</text>
 			</view>
 			
 			<view class="row">
 				<text class="title">科室：</text>
-				<text class="content"></text>
+				<text class="content">{{info.deptNm}}</text>
 			</view>
 			
 			<view class="row">
 				<text class="title">职称：</text>
-				<text class="content"></text>
+				<text class="content">{{info.docTitle}}</text>
 			</view>
 			
 			<view class="row">
 				<text class="title">职务：</text>
-				<text class="content"></text>
+				<text class="content">{{info.docPost}}</text>
 			</view>
 		</view>
 	</view>
@@ -43,7 +43,7 @@
 			return {
 				info:{
 					avatarUrl: "../../static/img/me/user-avatar.png",
-					phonenumber:'18482329095'
+					phonenumber:''
 				}
 			}
 		},
@@ -102,6 +102,9 @@
 	.detail-part {
 		padding: 150rpx 120rpx;
 		.row {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
 			padding:20rpx 0 ;
 			.title {
 				display: inline-block;
@@ -111,6 +114,7 @@
 				text-align: right;
 			}
 			.content {
+				flex:1;
 				font-size: 31rpx;
 			}
 		}

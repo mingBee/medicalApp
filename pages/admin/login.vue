@@ -5,12 +5,12 @@
 		<view class="header">登录</view>
 		
 		<view class="form">
-      <view class="inputWrapper" v-if="isFirstLogin">
+      <view class="inputWrapper" v-if="isFirstLogin && loginType === 'jobNum'">
 				<picker @change="bindPickerChange" :range="hospNameList" class="hosp-picker">
 						<view class="hosp-picker-view">{{curHosp.hosArev || '请选择医院'}}</view>
 				</picker>
-				<!-- <input class="input" type="text" v-model="form.hospital" placeholder="请输入医院名称"/> -->
 			</view>
+			
 			<view class="inputWrapper">
 				<input class="input" type="text" v-model="form.jobNum" :placeholder="loginType === 'jobNum' ? '请输入工号':'请输入手机号'"/>
 			</view>
@@ -40,21 +40,20 @@
 </template>
 
 <script>
-	import { getAllHosp, login ,getUserInfo } from "@/fetch/api/admin/index.js"
+	import { getAllHosp, login ,phoneLogin, getUserInfo ,saveClient } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
         form:{
-          hospital:'',
-          jobNum:'',
-          psd:''
+          jobNum:'', //  15523236998
+          psd:'' // 123456
         },
 				loginType:'jobNum',
 				isFirstLogin:true,
 				hospList:[],
 				hospNameList:[],
 				curHosp:{},
-				hosId:''
+				hosId:'' //100
 			}
 		},
 		onLoad() {
@@ -65,17 +64,12 @@
 			 * 是否选择了医院
 			 */
 			hasChooseHosp(){
-				try {
-				    const hosId = uni.getStorageSync('hosId');
-				    if (hosId) {
-				        this.hosId = hosId;
-								this.isFirstLogin = false;
-				    }else{
-							this.getHospList();
-						}
-				} catch (e) {
-				    // error
-						this.getHospList();
+				const hosId = uni.getStorageSync('hosId');
+				if ( hosId || hosId === 0 ) {
+					this.hosId = hosId;
+					this.isFirstLogin = false;
+				}else{
+					this.getHospList();
 				}
 			},
 			/**
@@ -95,68 +89,95 @@
 					}else{
 						this.hospList = [];
 					}
-					
 				})
 			},
 			/**
 			 * 登录
 			 */
 			login(){
-				// let params = {
-				// 	username:this.form.jobNum,
-				// 	newPassword:this.form.psd,
-				// 	hosId:this.hosId
-				// };
-				// if( !this.hosId && this.hosId !== 0 ){
-				// 	uni.showToast({
-				// 	    title: '请选择医院',
-				// 			icon:'none'
-				// 	});
-				// 	return
-				// }
-				// if( !this.form.jobNum && this.form.jobNum !== 0 ){
-				// 	uni.showToast({
-				// 	    title: '请输入工号',
-				// 			icon:'none'
-				// 	});
-				// 	return
-				// }
-				// if( !this.form.psd && this.form.psd !== 0 ){
-				// 	uni.showToast({
-				// 	    title: '请输入密码',
-				// 			icon:'none'
-				// 	});
-				// 	return
-				// }
+				if(this.loginType === 'jobNum' && !this.hosId && this.hosId !== 0){
+					uni.showToast({
+							title: '请选择医院',
+							icon:'none'
+					});
+					return
+				}
+				
+				if( !this.form.jobNum && this.form.jobNum !== 0 ){
+					uni.showToast({
+					    title: '请输入工号',
+							icon:'none'
+					});
+					return
+				}
+				if( !this.form.psd && this.form.psd !== 0 ){
+					uni.showToast({
+					    title: '请输入密码',
+							icon:'none'
+					});
+					return
+				}
+				uni.showLoading({
+				    title: '登录中'
+				});
+				
 				let params = {
-					username:'15523236998',
-					password:'123456',
-					hosId:'100'
+					username:this.form.jobNum,
+					password:this.form.psd
 				};
 				
-				login(params).then(res=>{
-					//缓存hosId
-					this.$uniPromiseMethods.setStorage('hosId','100').then(StorageRes=>{
-						console.log('成功缓存hosId');
+				if(this.loginType === 'jobNum'){
+					params.hosId = this.hosId;
+					login(params).then(res=>{
+						this.loginSet(res);
 					})
-					//缓存token
-					if(res){
-						this.$uniPromiseMethods.setStorageSync('token',res).then(StorageRes=>{
-							console.log('成功缓存token');
-							getUserInfo().then(userInfoRes=>{
-								let userInfo = {
+				}else{
+					phoneLogin(params).then(res=>{
+						this.loginSet(res);
+					})
+				}
+			},
+			loginSet(res){
+				//缓存hosId
+				this.$uniPromiseMethods.setStorage('hosId','100').then(StorageRes=>{
+					console.log('成功缓存hosId');
+				})
+				//缓存token
+				if(res){
+					this.$uniPromiseMethods.setStorageSync('token',res).then(StorageRes=>{
+						console.log('成功缓存token');
+						getUserInfo().then(userInfoRes=>{
+							let userInfo = {
+								userId:userInfoRes.userId,
+								docTitle:userInfoRes.docTitle,
+								deptNm:userInfoRes.deptNm
+							}
+							setTimeout(()=>{
+								let prinf = plus.push.getClientInfo();
+								let cid = prinf.clientid;
+								let clientParams = {
 									userId:userInfoRes.userId,
-									docTitle:userInfoRes.docTitle,
-									deptNm:userInfoRes.deptNm
-								}
-								this.$uniPromiseMethods.setStorageSync('userInfo',userInfo).then(userStorage=>{
-									console.log('成功缓存用户信息');
-									this.goTo_home();
+									clientId:cid
+								};
+								saveClient(clientParams).then(clientRes=>{
+									console.log('提交client成功 -- ' + cid );
 								})
+							},10000)
+							this.$uniPromiseMethods.setStorageSync('userInfo',userInfo).then(userStorage=>{
+								console.log('成功缓存用户信息');
+								uni.showToast({
+								    title: '登录成功',
+										icon:'none',
+								    duration: 1500
+								});
+								setTimeout(()=>{
+									uni.hideLoading();
+									this.goTo_home();
+								},1500)
 							})
 						})
-					}
-				})
+					})
+				}
 			},
 			bindPickerChange(e) {
 				let item = this.hospList[e.target.value];
@@ -184,7 +205,6 @@
 			 * 跳转到tab 首页 home
 			 */
 			goTo_home() {
-				console.log(111)
 				uni.switchTab({
 					url: '../tabBar/home/index'
 				})

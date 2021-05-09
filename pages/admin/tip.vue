@@ -11,7 +11,7 @@
 		</view>
 		
 		<view class="flex-center flex-dir-row btn-part">
-			<view class="no-agree-btn">不同意并退出</view>
+			<view class="no-agree-btn" @click="logoutApp">不同意并退出</view>
 			<view class="agree-btn" @click="goToLogin">同意</view>
 		</view>
 	</view>
@@ -25,9 +25,22 @@
 			}
 		},
 		methods:{
+			/**
+			 * 退出登录
+			 */
+			logoutApp(){
+				// #ifdef APP-PLUS  
+				plus.runtime.quit();  
+				// #endif
+			},
+			/**
+			 * 跳转到登录页
+			 */
 			goToLogin(){
-				uni.redirectTo({
-					url: '/pages/admin/login'
+				this.$uniPromiseMethods.setStorageSync('isFirstLogin','no').then(StorageRes=>{
+					uni.redirectTo({
+						url: '/pages/admin/login'
+					})
 				})
 			}
 		}

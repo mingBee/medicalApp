@@ -1,0 +1,202 @@
+<template>
+	<view class="container">
+		<list class="list" @loadmore ="loadMore" :loadmoreoffset="10">
+		
+			<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
+				<text class="refresh-txt">{{refreshText}}</text> 
+				<!-- 加载数据中... -->
+				<loading-indicator></loading-indicator>
+			</refresh>
+			
+		  <cell>
+				<view class="item" v-for="(item, index) in dataList" :key="item.id">
+					<text class="title">{{item.title|| '测试-市医保网监科1月申诉'}}</text>
+					<text class="pay-title">本批次共计疑似违规记录4条，拟扣款</text>
+					<text class="amount">{{item.amount || 0}}元</text>
+					<text class="detail-btn" @click="goToHistory(item)">查看详情>> </text>
+				</view>
+		  </cell>
+			
+			<cell v-if="isLoading">
+				<text class="loadmore-part">加载中...</text>
+			</cell>
+			
+			<cell v-if="isFinish">
+				<text class="loadmore-part">全部加载完成</text>
+			</cell>
+			
+		</list>
+	</view>
+
+</template>
+
+<script>
+	import { getHistoryList } from "@/fetch/api/home/index.js"
+  export default {
+    data () {
+      return {
+				refreshing:false,
+				isLoading:false,
+				isFinish:false,
+				refreshText:'',
+				dataList: [{}],
+				searchParams:{
+					cmsTitle:''
+				},
+				pageParams:{
+					offset:0,
+					limit:10
+				},
+				userInfo:{},
+				hosId:'',
+				batchId:''
+      }
+    },
+		onLoad(){
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.hosId = uni.getStorageSync('hosId');
+			this.batchId = uni.getStorageSync('batchId');
+			this.onrefresh();
+		},
+		methods:{
+			/**
+			 * 获取历史批次列表
+			 */
+			getHistoryList(){
+				let params = {
+					// hosId:100,
+					// userId:101,
+					// batchId:'100',
+					userId:this.userInfo.userId,
+					hosId:this.hosId,
+					offset:this.pageParams.offset * this.pageParams.limit,
+					limit:this.pageParams.limit
+				}
+				return getHistoryList(params)
+			},
+			onpullingdown(e) {
+				if (this.refreshing) return;
+				if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+					this.refreshText = '↑ 加载中'
+				} else {
+					this.refreshText = '↓ 加载中'
+				}
+			},
+			onrefresh() {
+				if (this.refreshing) return;
+				this.refreshing = true;
+				this.isFinish = false;
+				try{
+					this.pageParams.offset = 0;
+					this.getHistoryList().then(res=>{
+						this.dataList = res;
+						this.refreshing = false;
+						this.refreshText = '↓ 加载中';
+						if(res.length < this.pageParams.limit){
+							this.isFinish = true;
+						}
+					})
+				}catch(err){
+					this.refreshing = false;
+					this.refreshText = '↓ 加载中'
+				}
+			},
+			loadMore(){
+				if(this.isFinish || this.isLoading) return;
+				try{
+					this.pageParams.offset += 1;
+					this.isLoading = true;
+					this.getHistoryList().then(res=>{
+						this.dataList = this.dataList.concat( res );
+						this.isLoading = false;
+						if(res.length < this.pageParams.limit){
+							this.isFinish = true;
+						}
+					})
+				}catch(err){
+					this.pageParams.offset -= 1;
+					this.isLoading = false;
+					this.isFinish = false;
+				}
+			},
+			/**
+			 * 跳转到历史详情
+			 */
+			goToHistory(item){
+				uni.setStorage({
+				    key: 'applHistBatchId',
+				    data: item.batchId,
+				    success: function () {
+							uni.navigateTo({
+								url: '/pages/home/history-detail'
+							});
+				    }
+				});
+			}
+		}
+  }
+</script>
+
+<style scoped>
+	.container {
+		flex:1;
+	}
+	.list {
+		background-color: #f0f0f0;
+		flex:1;
+	}
+	.list .refresh-part {
+		width:750rpx;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+		padding:20rpx 0;
+	}
+	.list .refresh-part .refresh-txt {
+		color:#333;
+		font-size: 29rpx;
+		margin-right:30rpx;
+	}
+	.list .item {
+		flex-direction: column;
+		align-items: flex-start;
+		margin:15rpx 15rpx 15rpx;
+		padding:10rpx 25rpx;
+		width:720rpx;
+		border-radius: 10rpx;
+		background-color: #fff;
+	}
+	.list .item .title{
+		font-size: 30rpx;
+		font-weight: 600;
+		padding:10rpx 0;
+	}
+	.list .item .pay-title {
+		font-size: 28rpx;
+		padding:10rpx 0;
+	}
+	.list .item .amount {
+		font-size: 28rpx;
+		padding:10rpx 0;
+	}
+	.list .item .detail-btn {
+		color:#3B43F2;
+		font-size: 27rpx;
+		padding:10rpx 0;
+	}
+	
+	.list .loadmore-part {
+		text-align: center;
+		padding:15rpx 0 20rpx;
+		font-size: 28rpx;
+		color:#24AEF3;
+	}
+	
+	.detail-area .bottom .time {
+		font-size: 24rpx;
+		margin-right:15rpx;
+	}
+	.detail-area .bottom .depart{
+		font-size: 24rpx;
+	}
+</style>

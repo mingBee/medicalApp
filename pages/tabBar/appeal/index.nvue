@@ -1,0 +1,486 @@
+<template>
+	<view class="container">
+		<fun-bar color="#5677FC"></fun-bar>
+
+		<view class="tab-part">
+			<text class="item" @click="choiceType('nofeed')" :class="{active:sign ==='nofeed'}">未申诉({{total.nofeed}})</text>
+			<text class="item" @click="choiceType('havfeed')" :class="{active:sign ==='havfeed'}">已申诉({{total.havfeed}})</text>
+		</view>
+
+		<view class="notify-part" v-if="batchInfo.batchDes && batchInfo.endTime">
+			<text class="item">{{batchInfo.batchDes}}申诉中，截止日期：{{batchInfo.endTime}}</text>
+		</view>
+
+		<list class="list" :loadmoreoffset="10" @loadmore="loadMore" ref="list">
+
+			<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' "
+				class="refresh-part">
+				<text class="refresh-txt">{{refreshText}}</text>
+				<!-- 加载数据中... -->
+				<loading-indicator></loading-indicator>
+			</refresh>
+
+			<cell>
+				<view class="item-wrap" v-for="(item,index) in appealList[sign]" :key="item.id">
+					
+					<view class="item" >
+						
+						<view class="flex-dir-colunm reason-area">
+							<view class="flex-dir-row reason-cell">
+								<text class="title">拒付理由:</text>
+								<text class="value">{{item.vioReason}}</text>
+							</view>
+							
+							<view class="flex-dir-row reason-cell" v-if="sign ==='havfeed'">
+								<text class="title">违反规则:</text>
+								<text class="value">{{item.roleClassNm}}</text>
+							</view>
+							
+							<view class="flex-dir-row reason-cell" v-if="sign ==='havfeed'">
+								<text class="title">申诉理由:</text>
+								<text class="value">{{item.feedbackReason}}</text>
+							</view>
+							
+							<view class="flex-dir-row reason-cell img-section" v-if="sign ==='havfeed'">
+								<text class="title">申诉图片:</text>
+								<view class="img-muster">
+									<image :src="child" v-for="(child,cIdx) in formatList(item.imgAddr)" :key="cIdx+'cId'" class="appeal-img" @tap="previewImage(cIdx,formatList(item.imgAddr))"></image>
+								</view>
+							</view>
+							
+						</view>
+					
+						<view class="detail-area">
+							<view class="detail-cell">
+								<text class="title">参保人：</text>
+								<text class="value">{{item.patientNm}}</text>
+							</view>
+							<view class="detail-cell">
+								<text class="title">住院号：</text>
+								<text class="value">{{item.hosNum}}</text>
+							</view>
+							<view class="detail-cell">
+								<text class="title">出院诊断：</text>
+								<text class="value">{{item.outDiag}}</text>
+							</view>
+							<view class="detail-cell">
+								<text class="title">三目名称：</text>
+								<text class="value">{{item.medProName}}</text>
+							</view>
+							
+							<view class="detail-row">
+								
+								<view class="detail-cell">
+									<text class="title">扣款金额：</text>
+									<text class="value">{{item.carpayAmount || 0}}元</text>
+								</view>
+								
+								<view class="detail-cell btn-cell" v-if="sign ==='nofeed'">
+									<text class="btn" @click="goToAppealForm(item)">申诉</text>
+								</view>
+								
+							</view>
+						</view>
+										
+					</view>
+					<view class="sign" v-if="sign ==='nofeed'"></view>
+				</view>
+
+			</cell>
+
+			<cell v-if="isLoading">
+				<text class="loadmore-part">加载中...</text>
+			</cell>
+
+			<cell v-if="isFinish">
+				<text class="loadmore-part">全部加载完成</text>
+			</cell>
+
+		</list>
+
+	</view>
+</template>
+
+<script>
+	import {
+		getAppealList
+	} from '@/fetch/api/appeal/appeal.js';
+	import funBar from '@/pages/common-comp/fun-bar.vue'
+	import { getDetail } from "@/fetch/api/home/index.js"
+	export default {
+		components: {
+			funBar
+		},
+		data() {
+			return {
+				sign: 'nofeed',
+				refreshing: false,
+				isLoading: false,
+				isFinish: false,
+				refreshText: '',
+				pageParams: {
+					offset: 0,
+					limit: 10
+				},
+				appealList: {
+					nofeed:[],
+					havfeed:[]
+				},
+				total:{
+					nofeed:0,
+					havfeed:0
+				},
+				batchInfo:{
+					endTime:'',
+					batchDes:''
+				}
+			}
+		},
+		onLoad() {
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.batchId = uni.getStorageSync('batchId');
+			this.hosId = uni.getStorageSync('hosId');
+			this.onrefresh();
+		},
+		onShow(){
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.batchId = uni.getStorageSync('batchId');
+			this.hosId = uni.getStorageSync('hosId');
+			this.getDetail();
+			try {
+				let refreshSign = uni.getStorageSync('appealListRefresh');
+				if (refreshSign === 'refresh') {
+					uni.removeStorage({
+						key: 'appealListRefresh',
+						success: function (res) {
+							console.log('移除appealListRefresh成功');
+						}
+					});
+					this.onrefresh();
+				}
+			} catch (e) {
+			    
+			}
+		},
+		methods: {
+			choiceType(sign) {
+				this.sign = sign;
+				this.onrefresh();
+			},
+			goToAppealForm(item) {
+				uni.setStorage({
+				    key: 'appealItem',
+				    data: item,
+				    success: function () {
+							uni.navigateTo({
+								url: '/pages/appeal/form/index'
+							});
+				    }
+				});
+			},
+			/**
+			 *获取申诉总数
+			 */
+			getDetail(){
+				let params = {
+					userId:this.userInfo.userId,
+					hosId:this.hosId,
+					batchId:this.batchId
+				}
+				getDetail(params).then(res=>{
+					this.batchInfo.endTime = res.endTime;
+					this.batchInfo.batchDes = res.batchDes;
+					let noAppealNum = Number(res.noAppealNum || 0);
+					let hasAppealNum = Number(res.hasAppealNum || 0);
+					this.total.nofeed = noAppealNum;
+					this.total.havfeed = hasAppealNum;
+					if(noAppealNum > 0){
+						uni.setTabBarBadge({
+						  index: 1,
+						  text: String(noAppealNum)
+						})
+					}else{
+						uni.removeTabBarBadge({
+						  index: 1
+						})
+					};
+				})
+			},
+			/**
+			 * 获取申诉列表
+			 */
+			getAppealList() {
+				let params = {
+					userId: this.userInfo.userId,
+					hosId: this.hosId,
+					batchId: this.batchId,
+					offset: this.pageParams.offset * this.pageParams.limit,
+					limit: this.pageParams.limit,
+					feedbackState: this.sign
+				}
+				// let params = {
+				// 	userId:101,
+				// 	offset:0,
+				// 	limit:10,
+				// 	feedbackState: this.sign,
+				// 	hosId:100,
+				// 	batchId:'838463006500188160'
+				// }
+				return getAppealList(params);
+			},
+			onpullingdown(e) {
+				if (this.refreshing) return;
+				if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+					this.refreshText = '↑ 加载中'
+				} else {
+					this.refreshText = '↓ 加载中'
+				}
+			},
+			onrefresh(e) {
+				if (this.refreshing) return;
+				this.refreshing = true;
+				this.isFinish = false;
+				
+				try {
+					this.pageParams.offset = 0;
+					this.getAppealList().then(res=>{
+					// setTimeout(() => {
+					// 	let res = {
+					// 		vioInfoNoFeedbacks: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+					// 	};
+					this.appealList[this.sign].splice(0,this.appealList[this.sign].length);
+					this.appealList[this.sign] = res.vioInfoNoFeedbacks;
+					this.refreshing = false;
+					this.refreshText = '↓ 加载中';
+					if (res.vioInfoNoFeedbacks.length < this.pageParams.limit) {
+						this.isFinish = true;
+					}
+					// }, 1500)
+
+					})
+				} catch (err) {
+					this.refreshing = false;
+					this.refreshText = '↓ 加载中'
+				}
+			},
+			loadMore() {
+				if (this.isFinish || this.isLoading) return;
+				try {
+					this.pageParams.offset += 1;
+					this.isLoading = true;
+					this.getAppealList().then(res=>{
+					// setTimeout(() => {
+						// let res = {
+						// 	vioInfoNoFeedbacks: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+						// };
+						if (this.pageParams.offset == 1) {
+							res.vioInfoNoFeedbacks.shift();
+						}
+						this.appealList[this.sign] = this.appealList[this.sign].concat(res.vioInfoNoFeedbacks);
+						setTimeout(() => {
+							this.isLoading = false;
+							if (res.vioInfoNoFeedbacks.length < this.pageParams.limit) {
+								this.isFinish = true;
+							}
+						}, 0)
+					// }, 1500)
+					})
+				} catch (err) {
+					this.pageParams.offset -= 1;
+					this.isLoading = false;
+					this.isFinish = false;
+				}
+			},
+			formatList(imgStr){
+				if(!imgStr) return
+				let list = imgStr.split(';');
+				return list.slice(0,4);
+			},
+			previewImage(current,list) {
+				uni.previewImage({
+					current: current,
+					urls: list
+				})
+			},
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		flex: 1;
+		align-items: stretch;
+	}
+
+	.tab-part {
+		flex-direction: row;
+		background-color: #5677FC;
+		box-shadow: 0 5rpx 5rpx 5rpx rgba(0, 0, 0, .5);
+	}
+
+	.tab-part .item {
+		flex: 1;
+		display: inline-block;
+		padding: 18rpx 0;
+		text-align: center;
+		color: rgba(255, 255, 255, 0.6);
+		border-bottom-color: #5677FC;
+		border-bottom-width: 2px;
+		border-bottom-style: solid;
+		font-size: 32rpx;
+	}
+
+	.tab-part .item.active {
+		border-bottom-color: #fff;
+		color: #fff;
+		font-weight: 600;
+	}
+
+	.notify-part {
+		margin: 15rpx 0;
+	}
+
+	.notify-part .item {
+		padding: 5rpx 15px;
+		background-color: #FEFBE8;
+		color: #E5A046;
+		font-size: 26rpx;
+	}
+
+	.list {
+		flex: 1;
+	}
+
+	.list .refresh-part {
+		width: 750rpx;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+		padding: 30rpx 0;
+	}
+
+	.list .refresh-part .refresh-txt {
+		color: #333;
+		font-size: 29rpx;
+		margin-right: 30rpx;
+	}
+	
+	.list .sign {
+		position: absolute;
+		top: 9rpx;
+		left: 9rpx;
+		width: 16rpx;
+		height: 16rpx;
+		border-radius: 50%;
+		background-color: #DD5044;
+		z-index:1;
+	}
+	.list .item-wrap {
+		position: relative;
+		width:750rpx;
+		padding: 15rpx;
+	}
+	.list .item {
+		width: 720rpx;
+		background-color: #fff;
+		box-shadow:0 0 3px 3px #ccc;
+		padding: 15rpx 15rpx;
+	}
+
+
+
+	.list .item .title {
+		display: inline-block;
+		/* 		min-width: 200rpx; */
+		font-size: 30rpx;
+
+	}
+
+	.list .item .reason-area {
+		position: relative;
+		background-color: #fff;
+		box-shadow:0 0 3px 3px #ccc;
+		padding: 15rpx 10rpx;
+	}
+	.reason-area .reason-cell {
+		flex-direction: row;
+		padding: 10rpx 0;
+		align-items: baseline;
+	}
+
+	.reason-area .reason-cell .title {
+		font-size: 27rpx;
+		font-weight: 600;
+		width: auto;
+		margin-right: 15rpx;
+	}
+
+	.reason-area .reason-cell .value {
+		flex: 1;
+		font-size: 29rpx;
+	}
+	
+	.reason-area .img-section {
+		align-items:baseline;
+	}
+	
+	.reason-area .img-section .img-muster {
+		flex-direction: row;
+		align-items: center;
+	}
+	
+	.reason-area .img-section .appeal-img {
+		width:90rpx;
+		height:90rpx;
+		margin:0 15rpx 15rpx 0;
+		border:1px solid #f0f0f0;
+	}
+	
+	.detail-area {
+		padding: 15rpx 0;
+	}
+	.detail-area .detail-row {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.detail-area .detail-cell {
+		flex-direction: row;
+		align-items: baseline;
+		padding: 10rpx 0;
+		font-size: 30rpx;
+	}
+	
+	.detail-area .detail-cell .title{
+		font-size: 26rpx;
+		font-weight: 600;
+		min-width:150rpx;
+	}
+	
+	.detail-area .detail-cell .value{
+		flex:1;
+		text-align: left;
+		font-size: 29rpx;
+	}
+
+	.detail-area .btn-cell {
+		justify-content: flex-end;
+		padding-right: 50rpx;
+		font-size: 30rpx;
+	}
+
+	.detail-area .btn-cell .btn {
+		background-color: #007AFF;
+		color: #fff;
+		border-radius: 15rpx;
+		padding: 8rpx 30rpx;
+		font-size: 27rpx;
+	}
+
+	.list .loadmore-part {
+		text-align: center;
+		padding: 15rpx 0 20rpx;
+		font-size: 28rpx;
+		color: #24AEF3;
+	}
+</style>

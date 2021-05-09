@@ -19,7 +19,7 @@ export function saveAppealInfo(data) {
 
 export function imgUpload(files) {
   return upload({
-    url: 'api/common/upload',
+    url: 'common/upload',
     files
   })
 }

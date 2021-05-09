@@ -5,12 +5,12 @@
 			
 			<view class="area">
 				<text class="title">医生:</text>
-				<text class="value">{{item.user_name}}</text>
+				<text class="value">{{item.userName}}</text>
 			</view>
 			
 			<view class="area">
 				<text class="title">拟扣款:</text>
-				<text class="value">{{item.carpay_total_amount}}元</text>
+				<text class="value">{{item.carpayTotalAmount}}元</text>
 			</view>
 			
 			<view class="area">
@@ -69,11 +69,12 @@
 	}
 		
 	.area .title {
-		font-size: 30rpx;
+		font-size: 28rpx;
+		font-weight: 600;
 	}
 	
 	.area .value {
-		font-weight: 600;
-		font-size: 30rpx;
+		font-size: 28rpx;
+		margin-left:4rpx;
 	}
 </style>

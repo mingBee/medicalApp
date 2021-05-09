@@ -2,7 +2,7 @@
 	<view class="flex-center flex-dir-column wrap">
 		<view class="flex-center flex-dir-row logo-part">
 			<image class="logo" src="../../static/img/base/logo.png"></image>
-			<text class="app-name">医疗应用软件</text>
+			<text class="app-name">e申</text>
 		</view>
 		
 		<text class="edition">版本 1.0.0</text>
@@ -36,7 +36,7 @@
 			height:100rpx;
 		}
 		.app-name {
-			font-size: 33rpx;
+			font-size: 37rpx;
 			margin-left:30rpx;
 		}
 	}

@@ -22,12 +22,7 @@
 	export default {
 		data(){
 			return {
-				info:{
-					title:"山西将统一城乡居民医保门诊慢病病种",
-					time:'2014-10-24',
-					department:'山西医保局',
-					content:"aaaaaaaaa"
-				}
+				info:{}
 			}
 		},
 		onLoad(){

@@ -13,7 +13,7 @@
 		</view>
 		<textarea class="contact-part" auto-height placeholder="请留下您的联系方式，手机号、微信、QQ，便于联系" v-model="form.contact"/>
 		
-		<view class="loginBtn">
+		<view class="loginBtn" @click="addOpinion">
 			<text class="btnValue">提交</text>
 		</view>
 		
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+	import { addOpinion } from "@/fetch/api/me/index.js"
 	export default {
 		data(){
 			return {
@@ -28,6 +29,44 @@
 					reason:'',
 					contact:''
 				}
+			}
+		},
+		onLoad(){
+			this.userInfo = uni.getStorageSync('userInfo');
+		},
+		methods:{
+			addOpinion(){
+				if( !this.form.reason ){
+					uni.showToast({
+					    title: '请先填写问题描述',
+							icon:'none'
+					});
+					return
+				}
+				if( !this.form.contact ){
+					uni.showToast({
+					    title: '请填写好联系方式',
+							icon:'none'
+					});
+					return
+				}
+				let params = {
+					userId:this.userInfo.userId,
+					queryDesc:this.form.reason,
+					queryCont:this.form.contact
+				}
+				addOpinion(params).then(res=>{
+					uni.showToast({
+						title: '提交成功',
+						icon:'none',
+						duration:1400
+					});
+					setTimeout(()=>{
+						uni.navigateBack({
+							delta:1
+						})
+					},1400);
+				})
 			}
 		}
 	}

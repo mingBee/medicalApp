@@ -36,9 +36,10 @@
 		},
 		methods: {
 			phone(){
-				uni.makePhoneCall({
-				    phoneNumber: '400-000-000' //仅为示例
-				});
+				// uni.makePhoneCall({
+				//     phoneNumber: '400-000-000' //仅为示例
+				// });
+				plus.device.dial('400-000-000',true);
 			},
 			/**
 			 * 跳转到登录页 重新登陆
@@ -82,13 +83,14 @@
 	
 	.loginBtn{
 		width: 100%;
-		height: 70rpx;
+		height: 75rpx;
 		background: #77B307;
 		border-radius: 10rpx;
 		margin-top: 65px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		font-size: 30rpx;
 		.btnValue{
 			color: white;
 		}

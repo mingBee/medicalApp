@@ -1,14 +1,14 @@
 <template>
 	<view class="center">
 		<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">
-			<image class="logo-img" :src="avatarUrl"></image>
+			<image class="logo-img" :src="info.avatar || avatarUrl"></image>
 			<view class="flex-between flex-dir-row logo-title">
 				<view class="flex flex-dir-column  flex-align-start">
-					<text class="uer-name">Hi，{{hasLogin ? userName : '您未登录'}}</text>
-					<text class="user-phone" v-if="hasLogin">{{phone}}</text>
+					<text class="uer-name">Hi，{{hasLogin ? info.userName : '您未登录'}}</text>
+					<text class="user-phone" v-if="hasLogin">{{info.phonenumber}}</text>
 					
 				</view>
-				<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png" v-if="hasLogin"></image>
+		<!-- 		<image class="right-arrow-icon" src="../../../static/img/base/left_arrow.png" v-if="hasLogin"></image> -->
 			</view>
 		</view>
 		<view class="center-list">
@@ -61,11 +61,15 @@
 			<button v-if="hasLogin" class="primary logout-btn" type="primary" :loading="logoutBtnLoading"
 				@tap="bindLogout">退出登录</button>
 		</view>
+		
+		<uni-popup ref="popup" type="dialog">
+			<uni-popup-dialog mode="base" title="是否现在退出登录？" @confirm="popConfirm"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-
+	import { personInfo } from "@/fetch/api/me/index.js"
 	export default {
 		data() {
 			return {
@@ -73,18 +77,30 @@
 				avatarUrl: "../../../static/img/me/user-avatar.png",
 				inviteUrl: '',
 				logoutBtnLoading: false,
-				hasPwd:true,
-				userName:'王明',
-				phone:'18482329095'
-				//hasPwd: uni.getStorageSync('uni_id_has_pwd')
+				info:{
+					userName:'',
+					phonenumber:'',
+					avatar:''
+				}
 			}
 		},
-		// computed: {
-		// 	...mapState(['hasLogin', 'forcedLogin', 'userName'])
-		// },
-
+		onShow(){
+			this.personInfo();
+		},
 		methods: {
-			// ...mapMutations(['logout']),
+			/**
+			 * 获取用户信息
+			 */
+			personInfo(){
+				personInfo().then(res=>{
+					if(res){
+						this.info.userName = res.userName;
+						this.info.avatar = res.avatar;
+						this.info.phonenumber = res.phonenumber;
+					}
+					
+				})
+			},
 			/**
 			 * 跳转到修改密码
 			 */
@@ -117,81 +133,24 @@
 					url: '/pages/me/person-info'
 				})
 			},
-			
-			bindLogin() {
-				if (!this.hasLogin) {
-					univerifyLogin().catch(err => {
-						if (err === false) return;
-
-						uni.navigateTo({
-							url: '../login/login',
-						});
-					})
-				}
-			},
+			/**
+			 * 退出登录
+			 */
 			bindLogout() {
-				const loginType = uni.getStorageSync('login_type')
-				if (loginType === 'local') {
-					this.logout();
-					if (this.forcedLogin) {
+				this.$refs.popup.open('center');
+			},
+			popConfirm(){
+				this.logoutBtnLoading = true;
+				this.hosId = uni.getStorageSync('hosId');
+				uni.clearStorageSync();
+				this.$uniPromiseMethods.setStorageSync('isFirstLogin','no').then(StorageRes=>{
+					this.$uniPromiseMethods.setStorageSync('hosId',this.hosId).then(StgHosIdRes=>{
+						this.logoutBtnLoading = false;
 						uni.reLaunch({
-							url: '../login/login',
+							url: '/pages/admin/login'
 						});
-					}
-					return
-				}
-				this.logoutBtnLoading = true
-				// uniCloud.callFunction({
-				// 	name: 'user-center',
-				// 	data: {
-				// 		action: 'logout'
-				// 	},
-				// 	success: (e) => {
-
-				// 		console.log('logout success', e);
-
-				// 		if (e.result.code == 0) {
-				// 			this.logout();
-				// 			uni.removeStorageSync('uni_id_token')
-				// 			uni.removeStorageSync('username')
-				// 			uni.removeStorageSync('uni_id_has_pwd')
-				// 			/**
-				// 			 * 如果需要强制登录跳转回登录页面
-				// 			 */
-				// 			this.inviteUrl = ''
-				// 			if (this.forcedLogin) {
-				// 				uni.reLaunch({
-				// 					url: '../login/login',
-				// 				});
-				// 			}
-				// 		} else {
-				// 			uni.showModal({
-				// 				content: e.result.msg,
-				// 				showCancel: false
-				// 			})
-				// 			console.log('登出失败', e);
-				// 		}
-
-				// 	},
-				// 	fail: (e) => {
-				// 		uni.showModal({
-				// 			content: JSON.stringify(e),
-				// 			showCancel: false
-				// 		})
-				// 	},
-				// 	complete: () => {
-				// 		this.logoutBtnLoading = false
-				// 	}
-				// })
-			},
-			toInvite() {
-				uni.navigateTo({
-					url: '/pages/invite/invite'
-				})
-			},
-			goto() {
-				uni.navigateTo({
-					url: '../pwd/update-password'
+						return
+					})
 				})
 			}
 		}

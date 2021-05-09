@@ -1,6 +1,23 @@
 {
 	"pages": [
-		
+		{
+			"path": "pages/tabBar/home/index",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#23A8F2",
+				"app-plus": {
+					"titleNView": false //禁用原生导航栏  
+				}
+			}
+		},
+		{
+			"path": "pages/admin/tip",
+			"style": {
+				"app-plus": {  
+					"titleNView": false
+				}
+			}
+		},
 		{
 			"path": "pages/admin/login",
 			"style": {
@@ -9,6 +26,17 @@
 				}
 			}
 		},
+		{
+			"path": "pages/tabBar/policy/index",
+			"style": {
+				"navigationBarBackgroundColor": "#23A8F2",
+				"navigationBarTextStyle": "#ffffff",
+				"app-plus": {  
+					"titleNView": false //禁用原生导航栏  
+				} 
+			}
+		},
+		
 		{
 			"path": "pages/tabBar/me/index",
 			"style": {
@@ -60,31 +88,12 @@
 			}
 		},
 		{
-			"path": "pages/tabBar/home/index",
-			"style": {
-				"app-plus": {
-					"titleNView": false //禁用原生导航栏  
-				}
-			}
-		},
-		{
 			"path": "pages/tabBar/appeal/index",
 			"style": {
 				"app-plus": {
 					"navigationBarTextStyle": "#ffffff",
 					"titleNView": false //禁用原生导航栏  
 				}
-			}
-		},
-		{
-			"path": "pages/tabBar/policy/index",
-			"style": {
-				"navigationBarTitleText": "政策",
-				"navigationBarBackgroundColor": "#23A8F2",
-				"navigationBarTextStyle": "#ffffff",
-				"app-plus": {  
-					"titleNView": false //禁用原生导航栏  
-				} 
 			}
 		},
 		{
@@ -129,6 +138,23 @@
 			"path": "pages/home/depart-detail",
 			"style": {
 				"navigationBarTitleText": "科室累计情况详情"
+			}
+		},
+		{
+			"path": "pages/home/history",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"backgroundColor": "#377EB4",
+				"navigationBarTitleText": "历史批次"
+			}
+		},
+		{
+			"path": "pages/home/history-detail",
+			"style": {
+				"navigationBarTextStyle": "#ffffff",
+				"navigationBarBackgroundColor": "#377EB4",
+				"navigationBarTitleText": "批次详情"
 			}
 		},
 		{
@@ -187,18 +213,18 @@
 			},
 			{
 				"pagePath": "pages/tabBar/appeal/index",
-				"iconPath": "static/api.png",
-				"selectedIconPath": "static/apiHL.png",
+				"iconPath": "static/img/tabBar/appeal.png",
+				"selectedIconPath": "static/img/tabBar/appeal_active.png",
 				"text": "申诉"
 			}, {
 				"pagePath": "pages/tabBar/policy/index",
-				"iconPath": "static/extui.png",
-				"selectedIconPath": "static/extuiHL.png",
+				"iconPath": "static/img/tabBar/policy.png",
+				"selectedIconPath": "static/img/tabBar/policy_active.png",
 				"text": "政策"
 			}, {
 				"pagePath": "pages/tabBar/me/index",
-				"iconPath": "static/img/tabBar/nav_center.png",
-				"selectedIconPath": "static/img/tabBar/nav_center_on.png",
+				"iconPath": "static/img/tabBar/me.png",
+				"selectedIconPath": "static/img/tabBar/me_active.png",
 				"text": "我"
 			}
 		]

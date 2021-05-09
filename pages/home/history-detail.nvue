@@ -1,0 +1,321 @@
+<template>
+	<view class="container">
+
+		<list class="list" :loadmoreoffset="10" @loadmore="loadMore" ref="list">
+
+			<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' "
+				class="refresh-part">
+				<text class="refresh-txt">{{refreshText}}</text>
+				<!-- 加载数据中... -->
+				<loading-indicator></loading-indicator>
+			</refresh>
+
+			<cell>
+				<view class="item" v-for="(item,index) in detailList" :key="item.id">
+					
+					<view class="appeal-area">
+						<view class="flex-dir-row reason-section">
+							<text class="title">拒付理由:</text>
+							<text class="value">{{item.vioReason}}</text>
+						</view>
+						
+						<view class="flex-dir-row reason-section">
+							<text class="title">违反规则:</text>
+							<text class="value">{{item.roleClassNm}}</text>
+						</view>
+						
+						<view class="flex-dir-row reason-section">
+							<text class="title">申诉理由:</text>
+							<text class="value">{{item.feedbackReason}}</text>
+						</view>
+						
+						<view class="flex-dir-row reason-section img-section" v-if="item.imgAddr">
+							<text class="title">申诉图片:</text>
+							<view class="img-muster">
+								<image :src="child" v-for="(child,cIdx) in formatList(item.imgAddr)" :key="cIdx+'cId'" class="appeal-img"></image>
+							</view>
+						</view>
+					</view>
+					
+					<view class="detail-area">
+						<view class="detail-cell">
+							<text class="title">参保人：</text>
+							<text class="value">{{item.patientNm}}</text>
+						</view>
+						<view class="detail-cell">
+							<text class="title">住院号：</text>
+							<text class="value">{{item.hosNum}}</text>
+						</view>
+						<view class="detail-cell">
+							<text class="title">出院诊断：</text>
+							<text class="value">{{item.outDiag}}</text>
+						</view>
+						<view class="detail-cell">
+							<text class="title">三目名称：</text>
+							<text class="value">{{item.medProName}}</text>
+						</view>
+						<view class="detail-cell">
+							<text class="title">扣款金额：</text>
+							<text class="value">{{item.carpayAmount || 0}}元</text>
+						</view>							
+					</view>
+									
+				</view>
+			</cell>
+
+			<cell v-if="isLoading">
+				<text class="loadmore-part">加载中...</text>
+			</cell>
+
+			<cell v-if="isFinish">
+				<text class="loadmore-part">全部加载完成</text>
+			</cell>
+
+		</list>
+
+	</view>
+</template>
+
+<script>
+	import {
+		getHistoryDetail
+	} from '@/fetch/api/home/index.js';
+	import funBar from '@/pages/common-comp/fun-bar.vue'
+	export default {
+		components: {
+			funBar
+		},
+		data() {
+			return {
+				sign: 'nofeed',
+				refreshing: false,
+				isLoading: false,
+				isFinish: false,
+				refreshText: '',
+				pageParams: {
+					offset: 0,
+					limit: 10
+				},
+				detailList: []
+			}
+		},
+		onLoad() {
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.hosId = uni.getStorageSync('hosId');
+			this.batchId = uni.getStorageSync('applHistBatchId');
+			// this.getAppealList();
+			this.onrefresh();
+		},
+		methods: {
+			/**
+			 * 获取批次详情列表
+			 */
+			getHisDetailList() {
+				let params = {
+					userId: this.userInfo.userId,
+					hosId: this.hosId,
+					batchId: this.batchId,
+					offset: this.pageParams.offset * this.pageParams.limit,
+					limit: this.pageParams.limit,
+					feedbackState: 'havfeed'
+				}
+				// let params = {
+				// 	userId:101,
+				// 	offset:0,
+				// 	limit:10,
+				// 	hosId:100,
+				// 	batchId:'' || this.batchId
+				// }
+				return getHistoryDetail(params);
+			},
+			onpullingdown(e) {
+				if (this.refreshing) return;
+				if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+					this.refreshText = '↑ 加载中'
+				} else {
+					this.refreshText = '↓ 加载中'
+				}
+			},
+			onrefresh(e) {
+				if (this.refreshing) return;
+				this.refreshing = true;
+				this.isFinish = false;
+				try {
+					this.pageParams.offset = 0;
+					this.getHisDetailList().then(res=>{
+					// setTimeout(() => {
+					// 	let res = {
+					// 		vioInfoNoFeedbacks: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+					// 	};
+						this.detailList = res;
+						this.refreshing = false;
+						this.refreshText = '↓ 加载中';
+						if (res.length < this.pageParams.limit) {
+							this.isFinish = true;
+						}
+					// }, 1500)
+
+					})
+				} catch (err) {
+					this.refreshing = false;
+					this.refreshText = '↓ 加载中';
+				}
+			},
+			loadMore() {
+				if (this.isFinish || this.isLoading) return;
+				try {
+					this.pageParams.offset += 1;
+					this.isLoading = true;
+					this.getHisDetailList().then(res=>{
+					// setTimeout(() => {
+					// 	let res = {
+					// 		vioInfoNoFeedbacks: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+					// 	};
+						if (this.pageParams.offset == 1) {
+							res.shift();
+						}
+						this.detailList = this.detailList.concat(res);
+						setTimeout(() => {
+							this.isLoading = false;
+							if (res.length < this.pageParams.limit) {
+								this.isFinish = true;
+							}
+						}, 0)
+					// }, 1500)
+					})
+				} catch (err) {
+					this.pageParams.offset -= 1;
+					this.isLoading = false;
+					this.isFinish = false;
+				}
+			},
+			formatList(imgStr){
+				return imgStr.split(';');
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		flex: 1;
+		align-items: stretch;
+	}
+	
+	.list {
+		flex: 1;
+	}
+
+	.list .refresh-part {
+		width: 750rpx;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+		padding: 30rpx 0;
+	}
+
+	.list .refresh-part .refresh-txt {
+		color: #333;
+		font-size: 29rpx;
+		margin-right: 30rpx;
+	}
+
+	.list .item {
+		width: 720rpx;
+		margin: 15rpx 15rpx;
+		background-color: #fff;
+		box-shadow:0 0 3px 3px #ccc;
+		padding: 15rpx 15rpx;
+	}
+
+
+
+	.list .item .title {
+		/* 		min-width: 200rpx; */
+		font-size: 30rpx;
+
+	}
+	
+	.list .item .appeal-area{
+		border-bottom-width: 1px;
+		border-bottom-color: #eee;
+		padding:15rpx 0;
+	}
+
+	.list .item .reason-section {
+		align-items: baseline;
+		position: relative;
+		background-color: #fff;
+		padding: 10rpx;
+	}
+
+	.list .item .reason-section .title {
+		font-size: 29rpx;
+		width: auto;
+		margin-right: 20rpx;
+	}
+
+	.list .item .reason-section .value {
+		flex: 1;
+		font-size: 27rpx;
+	}
+	.list .item .img-section {
+		align-items:baseline;
+		
+	}
+	
+	.list .item .img-section .img-muster {
+		flex-direction: row;
+		align-items: center;
+	}
+	
+	.list .item .img-section .appeal-img {
+		width:100rpx;
+		height:100rpx;
+		margin-right:8rpx;
+	}
+	
+	.detail-area {
+		padding: 15rpx 10rpx;
+	}
+	.detail-area .detail-row {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.detail-area .detail-cell {
+		display: flex;
+		flex-direction: row;
+		padding: 10rpx 0;
+		font-size: 30rpx;
+	}
+	
+	.detail-area .detail-cell .title{
+		font-size: 29rpx;
+	}
+	
+	.detail-area .detail-cell .value{
+		font-size: 29rpx;
+	}
+
+	.detail-area .btn-cell {
+		justify-content: flex-end;
+		padding-right: 50rpx;
+		font-size: 30rpx;
+	}
+
+	.detail-area .btn-cell .btn {
+		background-color: #007AFF;
+		color: #fff;
+		border-radius: 15rpx;
+		padding: 6rpx 30rpx;
+		font-size: 24rpx;
+	}
+
+	.list .loadmore-part {
+		text-align: center;
+		padding: 15rpx 0 20rpx;
+		font-size: 28rpx;
+		color: #24AEF3;
+	}
+</style>

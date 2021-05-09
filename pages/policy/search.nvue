@@ -1,44 +1,64 @@
 <template>
-  <list class="list">
-
-		<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
-			<text class="refresh-txt">{{refreshText}}</text> 
-			<!-- 加载数据中... -->
-			<loading-indicator></loading-indicator>
-		</refresh>
+	<view class="container">
+		<list class="list" @loadmore ="loadMore" :loadmoreoffset="10">
 		
-    <cell v-for="(item, index) in dataList" :key="item.id">
-			<view class="item">
-				<image class="img" :src="item.cmsSubti"></image>
-				<view class="detail-area">
-					<text class="title">{{item.cmsTitle}}</text>
-					<view class="bottom">
-						<text class="time">{{item.time}}</text>
-						<text class="depart">{{item.department}}</text>
+			<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
+				<text class="refresh-txt">{{refreshText}}</text> 
+				<!-- 加载数据中... -->
+				<loading-indicator></loading-indicator>
+			</refresh>
+			
+		  <cell>
+				<view class="item" v-for="(item, index) in dataList" :key="item.cmsId" @click="goToDetail(item.cmsId)">
+					<image class="img" :src="item.subImg"></image>
+					<view class="detail-area">
+						<rich-text :nodes="formatContent(item.cmsTitle)"></rich-text>
+						<view class="bottom">
+							<text class="time">{{formatTime(item.pubDate)}}</text>
+							<text class="depart">{{formatDept(item.pubInst)}}</text>
+						</view>
 					</view>
 				</view>
-			</view>
-    </cell>
-  </list>
+		  </cell>
+			
+			<cell v-if="isLoading">
+				<text class="loadmore-part">加载中...</text>
+			</cell>
+			
+			<cell v-if="isFinish">
+				<text class="loadmore-part">全部加载完成</text>
+			</cell>
+			
+		</list>
+	</view>
+
 </template>
 
 <script>
 	import { getPolicyList } from "@/fetch/api/policy/index.js"
+	import parseHtml from "@/common/js/html-parser"
   export default {
     data () {
       return {
-        refreshing:false,
-        refreshText:'',
-        dataList: [],
-        pageParams:{
-        	offset:0,
-        	limit:10
-        }
+				refreshing:false,
+				isLoading:false,
+				isFinish:false,
+				refreshText:'',
+				dataList: [],
+				searchParams:{
+					cmsTitle:''
+				},
+				pageParams:{
+					offset:0,
+					limit:10
+				},
+				titleFs:uni.upx2px(28)
       }
     },
 		//点击搜索框
 		onNavigationBarSearchInputConfirmed(e){
 			console.log(e,'e');
+			this.searchParams.cmsTitle = e.text || '' ;
 			this.onrefresh();
 		},
 		methods:{
@@ -47,8 +67,8 @@
 			 */
 			getPolicyList(){
 				let params = {
-					cmsTitle:'',
-					offset:this.pageParams.offset,
+					cmsTitle:this.searchParams.cmsTitle,
+					offset:this.pageParams.offset * this.pageParams.limit,
 					limit:this.pageParams.limit
 				}
 				return getPolicyList(params)
@@ -61,41 +81,94 @@
 					this.refreshText = '↓ 加载中'
 				}
 			},
-			onrefresh(e) {
+			onrefresh() {
 				if (this.refreshing) return;
 				this.refreshing = true;
+				this.isFinish = false;
 				try{
 					this.pageParams.offset = 0;
 					this.getPolicyList().then(res=>{
+						this.dataList = [];
 						this.dataList = res;
 						this.refreshing = false;
 						this.refreshText = '↓ 加载中';
+						if(res.length < this.pageParams.limit){
+							this.isFinish = true;
+						}
 					})
 				}catch(err){
 					this.refreshing = false;
 					this.refreshText = '↓ 加载中'
 				}
 			},
-			goToSearch(){
-				uni.navigateTo({
-					url: '/pages/policy/search'
+			loadMore(){
+				if(this.isFinish || this.isLoading) return;
+				try{
+					this.pageParams.offset += 1;
+					this.isLoading = true;
+					this.getPolicyList().then(res=>{
+						this.dataList = this.dataList.concat( res );
+						this.isLoading = false;
+						if(res.length < this.pageParams.limit){
+							this.isFinish = true;
+						}
+					})
+				}catch(err){
+					this.pageParams.offset -= 1;
+					this.isLoading = false;
+					this.isFinish = false;
+				}
+			},
+			/**
+			 * 跳转到详情页
+			 */
+			goToDetail(id){
+				uni.setStorage({
+				    key: 'policyId',
+				    data: id,
+				    success: function () {
+							uni.navigateTo({
+								url: '/pages/policy/detail'
+							});
+				    }
 				});
-			}
+			},
+			formatTime(time){
+				if(!time) return '';
+				return time.substr(0,10);
+			},
+			formatDept(dept){
+				if(!dept) return '';
+				let index = dept.indexOf(' ');
+				return dept.substr(0,index);
+			},
+			formatContent(content){
+				if(!content) return '';
+				if(!this.searchParams.cmsTitle || content.indexOf(this.searchParams.cmsTitle) === -1){
+					return parseHtml(`<text style="fontSize:${this.titleFs}">${content}</text>`);
+				};
+				// // var reg=new RegExp(this.searchParams.cmsTitle,'g');
+				let result = content.replace(this.searchParams.cmsTitle , `<text style="color:#30B5EC;">${this.searchParams.cmsTitle}</text>`);
+				result = parseHtml(`<text style="fontSize:${this.titleFs}">${result}</text>`);
+				return result;
+			},
 		}
   }
 </script>
 
 <style scoped>
+	.container {
+		flex:1;
+	}
 	.list {
 		background-color: #f0f0f0;
 	}
 	.list .refresh-part {
 		width:750rpx;
-		display: flex;
 		justify-content: center;
 		align-items: center;
 		flex-direction: row;
-		padding:20rpx 0;
+		padding:30rpx 0;
 	}
 	.list .refresh-part .refresh-txt {
 		color:#333;
@@ -127,11 +200,20 @@
 	.list .item .detail-area .bottom {
 		flex-direction: row;
 		align-items: center;
+		margin-top:5rpx;
+	}
+	
+	.list .loadmore-part {
+		text-align: center;
+		padding:15rpx 0 20rpx;
+		font-size: 28rpx;
+		color:#24AEF3;
 	}
 	
 	.detail-area .bottom .time {
 		font-size: 24rpx;
 		margin-right:15rpx;
+/* 		color:#30B5EC; */
 	}
 	.detail-area .bottom .depart{
 		font-size: 24rpx;

@@ -17,6 +17,14 @@ export function login(data) {
   })
 }
 
+export function phoneLogin(data) {
+  return request({
+    url: 'jwt/phone/login',
+    method: 'POST',
+    data
+  })
+}
+
 export function verifyCode(phoneNum) {
   return request({
     url: `api/verify-code/generate/${phoneNum}`,
@@ -72,6 +80,42 @@ export function getUserInfo(data) {
   return request({
     url: 'api/user/personInfo',
     method: 'GET',
+		data
+  })
+}
+
+/**
+ * 获取批次id
+ * @param {Object} data
+ */
+export function getBatchId() {
+  return request({
+    url: 'api/vioBatch/getBatchId',
+    method: 'GET'
+  })
+}
+/**
+ * 检查token是否失效
+ * @param {Object} data
+ */
+export function tokenIsExpire() {
+  return request({
+    url: 'api/app/tokenIsExpire',
+    method: 'POST'
+  })
+}
+
+
+/**
+ * 提交clientId
+ * @param {Object} data
+ * userId
+ * clientId
+ */
+export function saveClient(data) {
+  return request({
+    url: 'api/userClient/saveClient',
+    method: 'POST',
 		data
   })
 }

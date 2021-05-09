@@ -2,9 +2,9 @@
 	<view>
 
 		<view class="qiun-charts">
-			<canvas canvas-id="canvasRing" id="canvasRing" class="charts" :width="cWidth*pixelRatio" :height="cHeight*pixelRatio"
-			 :style="{'width':cWidth+'px','height':cHeight+'px'}" @touchstart="touchPie($event,'canvasRing')"></canvas>
-			
+			<canvas canvas-id="canvasRing" id="canvasRing" class="charts" :width="cWidth*pixelRatio"
+			 :style="{'width':cWidth+'px'}" @touchstart="touchPie($event,'canvasRing')"></canvas>
+			 <!-- :height="this*pixelRatio"    ,'height':this+'px' -->
 			<!--#ifndef MP-ALIPAY -->
 <!-- 			<canvas canvas-id="canvasRing" id="canvasRing" class="charts" @touchstart="touchPie($event,'canvasRing')"></canvas> -->
 			<!--#endif-->
@@ -15,7 +15,6 @@
 
 <script>
 	import uCharts from '@/components/u-charts/u-charts.js';
-	var _self;
 	var canvasObj = {};
 
 	export default {
@@ -28,26 +27,25 @@
 		data() {
 			return {
 				cWidth: '',
-				cHeight: '',
+				cHeight:'',
 				pixelRatio: 1,
 				serverData: '',
 			}
 		},
 		mounted() {
-			_self = this;
 			//#ifdef MP-ALIPAY
 			uni.getSystemInfo({
-				success: function(res) {
+				success: (res)=> {
 					if (res.pixelRatio > 1) {
 						//正常这里给2就行，如果pixelRatio=3性能会降低一点
 						//_self.pixelRatio =res.pixelRatio;
-						_self.pixelRatio = 2;
+						this.pixelRatio = 2;
 					}
 				}
 			});
 			//#endif
 			this.cWidth = uni.upx2px(750);
-			this.cHeight = uni.upx2px(430);
+			this.cHeight = uni.upx2px(400);
 		},
 		watch:{
 			cdata:{
@@ -63,32 +61,14 @@
 								data: Number(newV.hasAppealNum)
 							}
 						]
-						this.getServerData(data);
+						this.fillData(data);
 					}		
 				},
-				deep:true
+				deep:true,
+				immediate: true
 			}
 		},
 		methods: {
-			getServerData(data) {
-				// uni.showLoading({
-				// 	title: "正在加载数据..."
-				// })
-				// uni.request({
-				// 	url: 'https://unidemo.dcloud.net.cn/hello-uniapp-ucharts-data.json',
-				// 	data: {},
-				// 	success: function(res) {
-				// 		_self.fillData(res.data);
-				// 	},
-				// 	fail: () => {
-				// 		_self.tips = "网络错误，小程序端请检查合法域名";
-				// 	},
-				// 	complete() {
-				// 		uni.hideLoading();
-				// 	}
-				// });
-					_self.fillData(data);
-			},
 			fillData(data) {
 				let Ring = [];
 				Ring = data;
@@ -97,50 +77,53 @@
 						return Ring[i].name + Ring[i].data
 					};
 				}
-				this.showRing("canvasRing", Ring);
+				this.$nextTick(()=>{
+					this.showRing("canvasRing", Ring);
+				})
 			},
 			showRing(canvasId, chartData) {
 				canvasObj[canvasId] = new uCharts({
-					$this: _self,
+					$this: this,
 					canvasId: canvasId,
 					type: 'ring',
-					fontSize: 11,
+					fontSize: 13,
 					padding: [5, 5, 5, 5],
+					loadingType:2,
 					legend: {
 						show: true,
-						position: 'center',
-						float: 'center',
-						itemGap: 30,
-						padding: 5,
+					 "position": "right",
+						"float": "bottom",
+						itemGap: 20,
+						padding: 3,
 						lineHeight: 26,
 						margin: 5,
 						//backgroundColor:'rgba(41,198,90,0.2)',
 						//borderColor :'rgba(41,198,90,0.5)',
-						borderWidth: 1
+						borderWidth: 2
 					},
-					// title: {
-					// 	name: '70%',
-					// 	color: '#7cb5ec',
-					// 	fontSize: 25 * _self.pixelRatio,
-					// },
+					title: {
+						name: '已申诉',
+						color: '#666666',
+						fontSize: uni.upx2px(35) * this.pixelRatio
+					},
 					// subtitle: {
-					// 	name: '收益率',
+					// 	name: '申诉率',
 					// 	color: '#666666',
-					// 	fontSize: 15 * _self.pixelRatio,
+					// 	fontSize: 15 * this.pixelRatio,
 					// },
 					extra: {
 						pie: {
 							lableWidth: 15,
-							ringWidth: 40 * _self.pixelRatio, //圆环的宽度
-							offsetAngle: 0 //圆环的角度
+							ringWidth: uni.upx2px(50) * this.pixelRatio, //圆环的宽度
+							offsetAngle: 50 //圆环的角度
 						}
 					},
 					background: '#FFFFFF',
-					pixelRatio: _self.pixelRatio,
+					pixelRatio: this.pixelRatio,
 					series: chartData,
 					animation: true,
-					width: _self.cWidth * _self.pixelRatio,
-					height: _self.cHeight * _self.pixelRatio,
+					width: this.cWidth * this.pixelRatio,
+					height: this.cHeight * this.pixelRatio,
 					disablePieStroke: true,
 					dataLabel: true,
 				});
@@ -164,14 +147,14 @@
 	.qiun-charts {
 		/* width: 750rpx; */
 		/* width:100%; */
-		height: 430rpx;
+		height: 400rpx;
 		background-color: #FFFFFF;
 	}
 
 	.charts {
 		/* width: 750rpx; */
 		width:100%;
-		height: 500rpx;
+		height: 400rpx;
 		background-color: #FFFFFF;
 	}
 

@@ -1,18 +1,17 @@
 <template>
 	<view>
-		<fun-bar></fun-bar>
+		<fun-bar color="#3B43F2"></fun-bar>
 		<swiper-comp></swiper-comp>
 		<view class="flex-between flex-dir-row tip-part" v-if="tipSign">
 			<text class="content">{{tip}}</text>
-			<text class="close-sign" @click="closeTip">x</text>
-	 </view>
-		
-<!-- 		<view class="notify-part">
-			<p class="item"></p>
-		</view> -->
+			<icon type="cancel" size="16" color="#fff" @click="closeTip"/>
+		</view>
+		<view class="notify-part"  v-if="info.batchDes">
+			<text class="item">市医保网监科{{info.batchDes}}情况</text>
+		</view>
 		
 		<chart-comp :cdata="info" v-if="hasAppeal"></chart-comp>
-		<view v-else class="no-appeal-part">
+		<view v-if="!hasAppeal" class="flex-center no-appeal-part">
 			<text class="txt">医保中心暂未下发申诉内容!!</text>
 		</view>
 		<total-detail></total-detail>
@@ -26,7 +25,7 @@
 	import chartComp from './components/ucharts'
 	import totalDetail from './components/total-detail'
 	import { getDetail } from "@/fetch/api/home/index.js"
-
+	import { getBatchId } from "@/fetch/api/admin/index.js"
 	export default {
 		components:{
 			funBar,
@@ -40,7 +39,7 @@
 				tip:'本次您的违规记录在本科室相对良好，请继续保持！',
 				tipSign:true,
 				isDoc:true,
-				hasAppeal:false
+				hasAppeal:true
 			}
 		},
 		onShow(){
@@ -48,25 +47,49 @@
 			this.hosId = uni.getStorageSync('hosId');
 			this.isDoc = this.userInfo.docTitle === "主治医生"?true:false;
 			
-			this.getDetail();
+			this.getBatchId();
 		},
 		methods:{
 			getDetail(){
 				let params = {
 					userId:this.userInfo.userId,
 					hosId:this.hosId,
-					batchId:100
+					batchId:this.batchId
 				}
 				getDetail(params).then(res=>{
-					this.info = res;
-					let totalAppeal = Number(this.info.noAppealNum) + Number(this.info.hasAppealNum);
+					let noAppealNum = Number(res.noAppealNum || 0);
+					let hasAppealNum = Number(res.hasAppealNum || 0);
+					let totalAppeal = noAppealNum + hasAppealNum;
+					if(noAppealNum > 0){
+						uni.setTabBarBadge({
+						  index: 1,
+						  text: String(noAppealNum)
+						})
+					}else{
+						uni.removeTabBarBadge({
+						  index: 1
+						})
+					};
 					this.hasAppeal =  totalAppeal === 0? false:true;
+					this.info = res;
 					if(this.info && (this.info.noAppealNum || this.info.hasAppealNum)){
 						let total = this.info.noAppealNum + this.info.hasAppealNum;
 						if(total> 15){
 							this.tip = "本次您的违规记录在本科室内相对较多，还请规范行为！";
 						}
 					}
+				})
+			},
+			/**
+			 * 获取批次id
+			 */
+			getBatchId(){
+				getBatchId().then(res=>{
+					this.$uniPromiseMethods.setStorage('batchId',res.batchId).then(StorageRes=>{
+						console.log('成功缓存batchId');
+					})
+					this.batchId = res.batchId;
+					this.getDetail();
 				})
 			},
 			/**
@@ -82,44 +105,45 @@
 <style lang="scss" scoped>
 	.tip-part {
 		position: fixed;
-		top:30rpx;
+		top:50rpx;
 		left:0;
 		right:0;
 		padding:10rpx 25rpx;
-		background-color: rgba(255,255,0,0.3);
+		background-color: #F99432;
 		z-index: 1;
 		
 		.content {
 			font-size: 26rpx;
-			color: #333;
+			color: #fff;
 		}
 		.close-sign {
 			display: inline-block;
 			width:27rpx;
 			height:27rpx;
-			line-height: 23rpx;
 			border-radius: 50%;
-			border:1px solid #333;
+			border:1px solid #fff;
 			text-align: center;
-			font-size: 26rpx;
+			font-size: 27rpx;
+			color: #fff;
 		}
 	}
 	
 	.notify-part {
-		margin:15rpx 0;
+		margin:15rpx 0 10rpx;
 		.item {
 			padding:10rpx 15px;
-			background-color: #FEFBE8;
 			color:#E5A046;
-			font-size: 25rpx;
+			font-size: 30rpx;
 		}
 	}
 	
 	.no-appeal-part {
+		box-sizing: border-box;
+		height:400rpx;
 		padding:30rpx;
 		text-align: center;
 		.txt {
-			font-size: 30rpx;
+			font-size: 33rpx;
 			color: #333;
 		}
 	}
