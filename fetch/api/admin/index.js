@@ -105,7 +105,6 @@ export function tokenIsExpire() {
   })
 }
 
-
 /**
  * 提交clientId
  * @param {Object} data

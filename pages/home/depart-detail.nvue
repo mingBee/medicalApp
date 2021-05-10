@@ -32,7 +32,7 @@
     },
 		onLoad(){
 			this.userInfo = uni.getStorageSync('userInfo');
-			this.hosId = uni.getStorageSync('hosId');
+			this.hosId = this.userInfo.hosId;
 			this.deptCollectDetail();
 		},
 		methods:{

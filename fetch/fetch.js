@@ -45,7 +45,7 @@ function fetch(options = {}) {
 				uni.showToast({
 					icon: 'none',
 					duration: 3000,
-					title: `${res.data.message}`
+					title: `${res.data.message || res.data.msg}`
 				});
 				rejected(res.data.message);//错误
       }

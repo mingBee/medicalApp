@@ -2603,12 +2603,7 @@ var render = function() {
         "v-uni-view",
         {
           staticClass: _vm._$g(1, "sc"),
-          attrs: { "hover-class": _vm._$g(1, "a-hover-class"), _i: 1 },
-          on: {
-            click: function($event) {
-              return _vm.$handleViewEvent($event)
-            }
-          }
+          attrs: { "hover-class": _vm._$g(1, "a-hover-class"), _i: 1 }
         },
         [
           _c("v-uni-image", {

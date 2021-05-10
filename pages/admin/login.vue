@@ -138,10 +138,6 @@
 				}
 			},
 			loginSet(res){
-				//缓存hosId
-				this.$uniPromiseMethods.setStorage('hosId','100').then(StorageRes=>{
-					console.log('成功缓存hosId');
-				})
 				//缓存token
 				if(res){
 					this.$uniPromiseMethods.setStorageSync('token',res).then(StorageRes=>{
@@ -150,9 +146,12 @@
 							let userInfo = {
 								userId:userInfoRes.userId,
 								docTitle:userInfoRes.docTitle,
-								deptNm:userInfoRes.deptNm
+								deptNm:userInfoRes.deptNm,
+								hosId:userInfoRes.hosId
 							}
 							setTimeout(()=>{
+								let token = uni.getStorageSync('token');
+								if(!token) return;
 								let prinf = plus.push.getClientInfo();
 								let cid = prinf.clientid;
 								let clientParams = {

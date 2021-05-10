@@ -39,7 +39,7 @@
 				isLoading:false,
 				isFinish:false,
 				refreshText:'',
-				dataList: [{}],
+				dataList: [],
 				searchParams:{
 					cmsTitle:''
 				},
@@ -54,7 +54,7 @@
     },
 		onLoad(){
 			this.userInfo = uni.getStorageSync('userInfo');
-			this.hosId = uni.getStorageSync('hosId');
+			this.hosId = this.userInfo.hosId;
 			this.batchId = uni.getStorageSync('batchId');
 			this.onrefresh();
 		},

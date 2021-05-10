@@ -1,6 +1,6 @@
 <template>
 	<view class="center">
-		<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">
+		<view class="logo" :hover-class="!hasLogin ? 'logo-hover' : ''">
 			<image class="logo-img" :src="info.avatar || avatarUrl"></image>
 			<view class="flex-between flex-dir-row logo-title">
 				<view class="flex flex-dir-column  flex-align-start">
@@ -141,7 +141,8 @@
 			},
 			popConfirm(){
 				this.logoutBtnLoading = true;
-				this.hosId = uni.getStorageSync('hosId');
+				this.userInfo = uni.getStorageSync('userInfo');
+				this.hosId = this.userInfo.hosId;
 				uni.clearStorageSync();
 				this.$uniPromiseMethods.setStorageSync('isFirstLogin','no').then(StorageRes=>{
 					this.$uniPromiseMethods.setStorageSync('hosId',this.hosId).then(StgHosIdRes=>{

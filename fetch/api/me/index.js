@@ -7,7 +7,7 @@ import request from '@/fetch/fetch.js'
  */
 export function resetPwd(data) {
   return request({
-    url: 'system/user/profile/resetPwd',
+    url: 'api/app/resetPwd',
     method: 'POST',
     data
   })

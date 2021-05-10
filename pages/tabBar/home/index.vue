@@ -44,7 +44,7 @@
 		},
 		onShow(){
 			this.userInfo = uni.getStorageSync('userInfo');
-			this.hosId = uni.getStorageSync('hosId');
+			this.hosId = this.userInfo.hosId;
 			this.isDoc = this.userInfo.docTitle === "主治医生"?true:false;
 			
 			this.getBatchId();

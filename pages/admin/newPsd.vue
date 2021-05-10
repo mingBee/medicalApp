@@ -30,7 +30,7 @@
 </template>
 
 <script>
-	import { updatePassword } from "@/fetch/api/admin/index.js"
+	import { updatePassword, getUserInfo ,saveClient } from "@/fetch/api/admin/index.js"
 	export default {
 		data() {
 			return {
@@ -60,17 +60,70 @@
 					newPassword:this.form.psd
 				};
 				updatePassword(params).then(res=>{
-					uni.showToast({
-					    title: '密码修改成功，登录中...',
+					if(res){
+						uni.showLoading({
+							title: '密码修改成功，登录中...'
+						});	
+						this.loginSet(res);
+					}else{
+						uni.showToast({
+							title: '密码修改成功，未获取令牌，请手动登录',
 							icon:'none',
-							duration:2000
-					});
-					setTimeout(()=>{
-						uni.switchTab({
-							url: '../tabBar/home/index'
+							duration: 1500
+						});
+						setTimeout(()=>{
+							uni.reLaunch({
+								url: '/pages/admin/login'
+							});
+						},1500)
+					}
+				})
+			},
+			loginSet(res){
+				//缓存token
+				this.$uniPromiseMethods.setStorageSync('token',res).then(StorageRes=>{
+					console.log('成功缓存token');
+					getUserInfo().then(userInfoRes=>{
+						let userInfo = {
+							userId:userInfoRes.userId,
+							docTitle:userInfoRes.docTitle,
+							deptNm:userInfoRes.deptNm,
+							hosId:userInfoRes.hosId
+						}
+						setTimeout(()=>{
+							let token = uni.getStorageSync('token');
+							if(!token) return;
+							let prinf = plus.push.getClientInfo();
+							let cid = prinf.clientid;
+							let clientParams = {
+								userId:userInfoRes.userId,
+								clientId:cid
+							};
+							saveClient(clientParams).then(clientRes=>{
+								console.log('提交client成功 -- ' + cid );
+							})
+						},10000)
+						this.$uniPromiseMethods.setStorageSync('userInfo',userInfo).then(userStorage=>{
+							console.log('成功缓存用户信息');
+							uni.showToast({
+									title: '登录成功',
+									icon:'none',
+									duration: 1300
+							});
+							setTimeout(()=>{
+								uni.hideLoading();
+								this.goTo_home();
+							},1300)
 						})
-					},2000);
-					
+					})
+				})
+			},
+			/**
+			 * 跳转到tab 首页 home
+			 */
+			goTo_home() {
+				uni.switchTab({
+					url: '../tabBar/home/index'
 				})
 			},
 			/**

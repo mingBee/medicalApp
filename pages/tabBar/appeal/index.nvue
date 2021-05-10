@@ -137,15 +137,15 @@
 			}
 		},
 		onLoad() {
-			this.userInfo = uni.getStorageSync('userInfo');
 			this.batchId = uni.getStorageSync('batchId');
-			this.hosId = uni.getStorageSync('hosId');
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.hosId = this.userInfo.hosId;
 			this.onrefresh();
 		},
 		onShow(){
-			this.userInfo = uni.getStorageSync('userInfo');
 			this.batchId = uni.getStorageSync('batchId');
-			this.hosId = uni.getStorageSync('hosId');
+			this.userInfo = uni.getStorageSync('userInfo');
+			this.hosId = this.userInfo.hosId;
 			this.getDetail();
 			try {
 				let refreshSign = uni.getStorageSync('appealListRefresh');
