@@ -1,16 +1,13 @@
 <template>
 	<view class="container">
 		
-		<view class="status-bar" :style="{ height: iStatusBarHeight + 'px'}"></view>
+		
 		
 		<list class="list" :loadmoreoffset="10" @loadmore ="loadMore" ref="list">
-				<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
-					<text class="refresh-txt">{{refreshText}}</text> 
-					<!-- 加载数据中... -->
-					<loading-indicator></loading-indicator>
-				</refresh>
+				
 
 			<header>
+				<view class="status-bar" :style="{ height: iStatusBarHeight + 'px'}"></view>
 				<view class="search-part" @click="goToSearch">
 					<view class="content">
 						<icon type="search" size="12" color="#fff" class="cum-search-icon"/>
@@ -18,9 +15,16 @@
 					</view>
 				</view>
 			</header>
+			
+			<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' " class="refresh-part">
+				<text class="refresh-txt">{{refreshText}}</text> 
+				<!-- 加载数据中... -->
+				<loading-indicator></loading-indicator>
+			</refresh>
+			
 			<!-- 注意事项: 不能使用 index 作为 key 的唯一标识 -->
-			<cell >
-				<view class="item" v-for="(item, index) in dataList" :key="item.cmsId" @click="goToDetail(item.cmsId)">
+			<cell v-for="(item, index) in dataList" :key="item.cmsId">
+				<view class="item" @click="goToDetail(item.cmsId)">
 					<view class="img-area">
 						<image class="main-img" :src="item.mainImg"></image>
 						<text class="title">{{item.cmsTitle}}</text>
@@ -111,12 +115,12 @@
 					this.isLoading = true;
 					this.getPolicyList().then(res=>{
 						this.dataList = this.dataList.concat( res );
-						 setTimeout(()=>{
+						 this.$nextTick(()=>{
 							 this.isLoading = false;
 							 if(res.length < this.pageParams.limit){
-							 	this.isFinish = true;
+								this.isFinish = true;
 							 }
-						 },0)
+						 })
 					})
 				}catch(err){
 					this.pageParams.offset -= 1;
@@ -154,6 +158,7 @@
 	.list{
 		flex:1;
 		padding-bottom:30rpx;
+		text-overflow: hidden;
 	}
 	.search-part {
 		background-color: #23A8F2;

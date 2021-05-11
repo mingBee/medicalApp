@@ -19,11 +19,24 @@
 						uni.reLaunch({
 							url: '/pages/admin/login',
 							success() {
-									// 手动关闭启动页(由于App.onLaunch方法和页面渲染是同时进行的，只有通过延长启动页的方法才能避免页面闪烁)
-									plus.navigator.closeSplashscreen()
+								uni.showToast({
+										title: '请检查网络是否开启',
+										icon:'none'
+								});
+								// 手动关闭启动页(由于App.onLaunch方法和页面渲染是同时进行的，只有通过延长启动页的方法才能避免页面闪烁)
+								plus.navigator.closeSplashscreen()
 							}
 						})
 					}
+				},err=>{
+					console.log(err,'login_err');
+					uni.reLaunch({
+						url: '/pages/admin/login',
+						success() {
+								// 手动关闭启动页(由于App.onLaunch方法和页面渲染是同时进行的，只有通过延长启动页的方法才能避免页面闪烁)
+								plus.navigator.closeSplashscreen()
+						}
+					})
 				})
 			}else { // 未登陆
 				if(isFirstLogin ==='no'){

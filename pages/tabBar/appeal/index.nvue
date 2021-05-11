@@ -1,18 +1,21 @@
 <template>
 	<view class="container">
-		<fun-bar color="#5677FC"></fun-bar>
-
-		<view class="tab-part">
-			<text class="item" @click="choiceType('nofeed')" :class="{active:sign ==='nofeed'}">未申诉({{total.nofeed}})</text>
-			<text class="item" @click="choiceType('havfeed')" :class="{active:sign ==='havfeed'}">已申诉({{total.havfeed}})</text>
-		</view>
-
-		<view class="notify-part" v-if="batchInfo.batchDes && batchInfo.endTime">
-			<text class="item">{{batchInfo.batchDes}}申诉中，截止日期：{{batchInfo.endTime}}</text>
-		</view>
-
+		
 		<list class="list" :loadmoreoffset="10" @loadmore="loadMore" ref="list">
-
+			
+			<header>
+				<fun-bar color="#5677FC"></fun-bar>
+				
+				<view class="tab-part">
+					<text class="item" @click="choiceType('nofeed')" :class="{active:sign ==='nofeed'}">未申诉({{total.nofeed}})</text>
+					<text class="item" @click="choiceType('havfeed')" :class="{active:sign ==='havfeed'}">已申诉({{total.havfeed}})</text>
+				</view>
+				
+				<view class="notify-part" v-if="batchInfo.batchDes && batchInfo.endTime">
+					<text class="item">{{batchInfo.batchDes}}申诉中，截止日期：{{batchInfo.endTime}}</text>
+				</view>
+			</header>
+			
 			<refresh @pullingdown='onpullingdown' @refresh="onrefresh" :display=" refreshing ? 'show' : 'hide' "
 				class="refresh-part">
 				<text class="refresh-txt">{{refreshText}}</text>
@@ -20,8 +23,8 @@
 				<loading-indicator></loading-indicator>
 			</refresh>
 
-			<cell>
-				<view class="item-wrap" v-for="(item,index) in appealList[sign]" :key="item.id">
+			<cell v-for="(item,index) in appealList[sign]" :key="item.id">
+				<view class="item-wrap" >
 					
 					<view class="item" >
 						
@@ -87,6 +90,15 @@
 				</view>
 
 			</cell>
+			
+<!-- 			<loading :display=" isLoading ? 'show' : 'hide' ">
+				<text class="loadmore-part">加载中...</text>
+			</loading>
+			
+			<loading :display=" isFinish ? 'show' : 'hide' ">
+				<text class="loadmore-part">全部加载完成</text>
+			</loading> -->
+			
 
 			<cell v-if="isLoading">
 				<text class="loadmore-part">加载中...</text>
@@ -273,16 +285,16 @@
 						// let res = {
 						// 	vioInfoNoFeedbacks: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
 						// };
-						if (this.pageParams.offset == 1) {
-							res.vioInfoNoFeedbacks.shift();
-						}
+						// if (this.pageParams.offset == 1) {
+						// 	res.vioInfoNoFeedbacks.shift();
+						// }
 						this.appealList[this.sign] = this.appealList[this.sign].concat(res.vioInfoNoFeedbacks);
-						setTimeout(() => {
+						 this.$nextTick(()=>{
 							this.isLoading = false;
 							if (res.vioInfoNoFeedbacks.length < this.pageParams.limit) {
 								this.isFinish = true;
 							}
-						}, 0)
+						});
 					// }, 1500)
 					})
 				} catch (err) {
@@ -294,6 +306,7 @@
 			formatList(imgStr){
 				if(!imgStr) return
 				let list = imgStr.split(';');
+				// .slice(0,4)
 				return list.slice(0,4);
 			},
 			previewImage(current,list) {
@@ -349,6 +362,7 @@
 
 	.list {
 		flex: 1;
+		text-overflow: hidden;
 	}
 
 	.list .refresh-part {
@@ -425,8 +439,11 @@
 	}
 	
 	.reason-area .img-section .img-muster {
+		flex:1;
 		flex-direction: row;
 		align-items: center;
+/* 		flex-wrap: wrap;
+		border:1px solid #000; */
 	}
 	
 	.reason-area .img-section .appeal-img {
